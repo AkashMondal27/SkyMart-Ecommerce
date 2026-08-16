@@ -30,10 +30,16 @@ export const loginUser = asyncHandler(async (req, res) => {
     });
 
     // 4. Save new OTP
-    await OTP.create({
+    // await OTP.create({
+    //     email: lowerCaseEmail,
+    //     otp: otp
+    // });
+    const savedOtp = await OTP.create({
         email: lowerCaseEmail,
         otp: otp
     });
+
+    console.log("✅ OTP SAVED:", savedOtp);
 
     // 5. Send OTP to Gmail
     await sendOtp(
