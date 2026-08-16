@@ -19,4 +19,4 @@ class ApiResponse {
 }
 
 // Export the class so it can be used in other files
-export default ApiResponse;
+export {ApiResponse};
