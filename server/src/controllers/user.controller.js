@@ -3,9 +3,12 @@ import sendOtp from "../utils/sendOtp.js";
 import OTP from "../models/otp.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import User from "../models/user.model.js";
 
 
-//It is besically  handle the Registration with otp .
+
+
+//It is besically  handle the Registration with otp . 
 export const loginUser = asyncHandler(async (req, res) => {
 
     const { email } = req.body;
@@ -57,3 +60,4 @@ export const loginUser = asyncHandler(async (req, res) => {
         )
     );
 });
+

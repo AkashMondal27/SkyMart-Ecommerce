@@ -14,10 +14,7 @@ const userSchema = new mongoose.Schema(
      type : String,
      default :"user"
     },
-    password: {
-      type: String,
-      required: true,
-    },
+   
      isVerified: {
             type: Boolean,
             default: false
@@ -27,6 +24,8 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
 
 const User = mongoose.model("User", userSchema);
 
