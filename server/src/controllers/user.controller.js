@@ -5,10 +5,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 
-
-//It is besically  handle the Registration with otp . 
+/* ============================================================
+  Send OTP to user email for login or registration
+=============================================================== */
 
 export const loginUser = asyncHandler(async (req, res) => {
 
@@ -33,55 +35,109 @@ export const loginUser = asyncHandler(async (req, res) => {
         email: lowerCaseEmail
     });
 
-    
+
+    // 4. Hash OTP
+    const hashedOtp = await bcrypt.hash(
+        otp,
+        10
+    );
+
+    console.log("Original OTP:", otp);
+    console.log("Hashed OTP:", hashedOtp);
+
+    // 5. Save HASHED OTP in MongoDB
     const savedOtp = await OTP.create({
         email: lowerCaseEmail,
-        otp: otp
+        otp: hashedOtp
     });
 
     console.log("✅ OTP SAVED:", savedOtp);
 
-    // 5. Send OTP to Gmail
+    // 6. Send  Original OTP to Gmail
     await sendOtp(
         lowerCaseEmail,
         subject,
         otp
     );
 
-    // 6. Send response
+
+    
+    // 7. Send response
     return res.status(200).json(
         new ApiResponse(
             200,
             null,
-            "OTP sent successfully to your email 👍"
+            "OTP sent successfully to your email  👍"
         )
     );
 });
 
 
-/*-----------------------------------------------------------------------------
+/*========================================================
            Verify OTP and create user if not exists
--------------------------------------------------------------------------------*/
+========================================================*/
 
 export const verifyUser = asyncHandler(async (req, res) => {
     const { email, otp } = req.body;
 
+     // 1. Validate input
+    if (!email || !otp) {
+        throw new ApiError(
+            400,
+            "Email and OTP are required"
+        );
+    }
+
     const lowerCaseEmail = email.toLowerCase().trim();
 
+    // 2. Find OTP using emai/
     const haveOtp = await OTP.findOne({
-        email: lowerCaseEmail,
-        otp: otp
+        email: lowerCaseEmail,   
     });
 
     if (!haveOtp) {
-        throw new ApiError(400, "Invalid OTP");
+        throw new ApiError(
+            400, 
+           "OTP not found or expired"
+        );
     };
 
-    let user =await User.findOne({
+
+    // 3. Check OTP expiration
+    if (haveOtp.expiresAt < new Date()) {
+
+        await OTP.deleteOne({
+            _id: haveOtp._id
+        });
+
+        throw new ApiError(
+            400,
+            "OTP has expired"
+        );
+    }
+
+ // 4. Compare entered OTP with hashed OTP
+    const isOtpCorrect = await bcrypt.compare(
+        otp.toString(),
+        haveOtp.otp
+    );
+
+    if (!isOtpCorrect) {
+        throw new ApiError(
+            400,
+            "Invalid OTP"
+        );
+    }
+
+ // 5. Find user
+    let user = await User.findOne({
         email: lowerCaseEmail
     });
-
-    if (user) {  // if user exists, generate JWT token and return success response
+ 
+    /*-------------------------------------------------------------------
+       if user exists, generate JWT token and return success response
+    --------------------------------------------------------------------*/ 
+    if (user) { 
         const token = jwt.sign(
             {
                 _id: user._id,
@@ -90,16 +146,29 @@ export const verifyUser = asyncHandler(async (req, res) => {
         });
 
 
-        await OTP.deleteOne();
+        await OTP.deleteOne({
+            _id: haveOtp._id
+        });
 
         return res.status(200).json(
             new ApiResponse(
                 200,
-                null,
-                "User logged in successfully  👍"
+                {
+                    user: {
+                        _id: user._id,
+                        email: user.email,
+                        isVerified: user.isVerified
+                    },
+                    token
+                },
+                "User logged in successfully 👍"
             )
         );
-    } else { // if user does not exist, create a new user
+    } 
+    /*-------------------------------------------------------------------
+       if user does not exist, create new user, generate JWT token and return success response
+    --------------------------------------------------------------------*/
+    else { 
         user = await User.create({
             email: lowerCaseEmail,
             isVerified: true
@@ -112,13 +181,21 @@ export const verifyUser = asyncHandler(async (req, res) => {
         });
 
 
-        await OTP.deleteOne();
-
+        await OTP.deleteOne({
+            _id: haveOtp._id
+        });
         return res.status(200).json(
             new ApiResponse(
                 200,
-                null,
-                "User logged in successfully  👍"
+                {
+                    user: {
+                        _id: user._id,
+                        email: user.email,
+                        isVerified: user.isVerified
+                    },
+                    token
+                },
+                "User logged in successfully 👍"
             )
         );
     }
