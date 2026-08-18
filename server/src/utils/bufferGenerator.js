@@ -4,8 +4,8 @@ import path from "path";
 const bufferGenerator = (file) => {
     const parser = new DataUriParser();
     const extName = path.extname(file.originalname).toString();
-    const dataUri = parser.format(extName, file.buffer);
-    return dataUri.content;         
+    
+    return parser.format(extName, file.buffer);        
 }
 
 export default bufferGenerator;
