@@ -178,3 +178,44 @@ export const updateCart = asyncHandler(async (req, res) => {
         );
     }
 });
+
+
+/* ============================================================
+     Fetch Cart
+   ============================================================ */
+
+  // Fetch all cart items for the logged-in user
+export const fetchCart = asyncHandler(async (req, res) => {
+
+    // Get user's cart and populate product details
+    const cart = await Cart.find({
+        user: req.user._id
+    }).populate("product");
+
+    // Calculate total quantity of all products
+    const sumOfQuantities = cart.reduce(
+        (total, item) => total + item.quantity,
+        0
+    );
+
+    // Calculate total cart price
+    let subTotal = 0;
+
+    cart.forEach((item) => {
+        const itemSubTotal = item.product.price * item.quantity;
+        subTotal += itemSubTotal;
+    });
+
+    // Send cart details and totals
+    return res.status(200).json(
+    new ApiResponse(
+        200,
+        {
+            cart,
+            subTotal,
+            sumOfQuantities
+        },
+        "Cart fetched successfully"
+    )
+);
+});
