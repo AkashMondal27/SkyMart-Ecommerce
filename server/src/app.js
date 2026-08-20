@@ -12,12 +12,14 @@ app.use(express.static("public"))   //store file store in my server
 import userRouter from "./routes/user.routes.js";
 import  productRoutes  from "./routes/product.routes.js";
 import cartRoutes from "./routes/cart.routes.js"
+import adddessRoutes from "./routes/address.routes.js"
 
 
 // Routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products" ,productRoutes);
 app.use("/api/v1/cart" , cartRoutes)
+app.use("/api/v1/address" , adddessRoutes)
 
 
 app.get("/", (req, res) => {

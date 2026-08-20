@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/cclearindex.js",
     "dev": "nodemon src/index.js"
   },
   "keywords": [],
