@@ -5,11 +5,11 @@ import jwt from 'jsonwebtoken'
 
 export const isAuth= asyncHandler(async(req,res,next)=>{
 
-
+   
          const token = req.headers.token;
     
          if(!token){
-            throw new ApiError(401 , "Unauthorized request")
+            throw new ApiError(401 , "Unauthorized request ,check isAuth middleware ")
          }
     
          const decodedToken= jwt.verify(token, process.env.JWT_SECRET)
@@ -17,11 +17,11 @@ export const isAuth= asyncHandler(async(req,res,next)=>{
          const user=  await  User.findById(decodedToken?._id)
     
          if(!user){
-            throw new ApiError( 401 ,"Invalid  Token")
+            throw new ApiError( 401 ,"Invalid  Token , check isAuth middleware ")
          }
     
          req.user=user
          next();
-    
+   
 })
 

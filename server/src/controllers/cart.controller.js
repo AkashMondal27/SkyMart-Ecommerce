@@ -3,11 +3,14 @@ import { Product } from "../models/product.model.js";
 import { Cart } from "../models/cart.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
-export const addToCart = asyncHandler(async (req, res) => {
+/* ============================================================
+   Add Product to Cart
+   ============================================================ */
 
+export const addToCart = asyncHandler(async (req, res) => {
     const { product } = req.body;
 
-    // Check product ID
+    // Validate product ID
     if (!product) {
         return res.status(400).json({
             statusCode: 400,
@@ -15,7 +18,7 @@ export const addToCart = asyncHandler(async (req, res) => {
         });
     }
 
-    // Find product
+    // Find the product
     const cartProd = await Product.findById(product);
 
     if (!cartProd) {
@@ -25,24 +28,23 @@ export const addToCart = asyncHandler(async (req, res) => {
         });
     }
 
-    // Check stock
+    // Check product stock
     if (cartProd.stock <= 0) {
         return res.status(400).json({
-          
             message: "Out of stock"
         });
     }
 
-    // Find existing cart item
+    // Check if product already exists in the user's cart
     let cart = await Cart.findOne({
         product: product,
         user: req.user._id
     }).populate("product");
 
-    // If product already exists in cart
+    // Increase quantity if product is already in cart
     if (cart) {
 
-        // Check if requested quantity reaches stock limit
+        // Prevent quantity from exceeding available stock
         if (cart.quantity >= cart.product.stock) {
             return res.status(400).json({
                 statusCode: 400,
@@ -50,36 +52,129 @@ export const addToCart = asyncHandler(async (req, res) => {
             });
         }
 
-        // Increase quantity
+        // Increase product quantity
         cart.quantity += 1;
 
-        // Save cart
+        // Save updated cart
         await cart.save();
 
         return res.status(200).json(
             new ApiResponse(
                 200,
-                
                 "Product added to cart successfully"
             )
         );
     }
 
-    
-
-    // Create new cart item
+    // Create a new cart item
     cart = await Cart.create({
         quantity: 1,
         product: product,
         user: req.user._id
     });
 
-    // Success response
+    // Send success response
     return res.status(201).json(
         new ApiResponse(
             201,
-           
             "Product added to cart successfully"
         )
     );
+});
+
+
+/* ============================================================
+   Remove Product from Cart
+   ============================================================ */
+
+export const removeFromCart = asyncHandler(async (req, res) => {
+
+    // Find the cart item
+    const cart = await Cart.findById(req.params.id); // need get method
+
+    if (!cart) {
+        return res.status(404).json({
+            statusCode: 404,
+            message: "Cart item not found"
+        });
+    }
+
+    // Remove the cart item
+    await cart.deleteOne();
+
+    // Send success response
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            null,
+            "Product removed from cart successfully"
+        )
+    );
+});
+
+
+/* ============================================================
+   Update Cart Product Quantity
+   ============================================================ */
+
+export const updateCart = asyncHandler(async (req, res) => {
+    const { action } = req.query;
+
+    // Increase product quantity
+    if (action === "inc") {
+
+        const { id } = req.body; // need post method
+
+        // Find the cart item
+        const cart = await Cart.findById(id).populate("product");
+
+        // Check stock before increasing quantity
+        if (cart.quantity < cart.product.stock) {
+            cart.quantity++;
+
+            // Save updated quantity
+            await cart.save();
+        } else {
+            return res.status(400).json({
+                message: "Out of stock"
+            });
+        }
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                null,
+                "Cart Updated successfully"
+            )
+        );
+    }
+
+    // Decrease product quantity
+    if (action === "dec") {
+
+        const { id } = req.body;
+
+        // Find the cart item
+        const cart = await Cart.findById(id).populate("product");
+
+        // Decrease quantity only if more than one item exists
+        if (cart.quantity > 1) {
+            cart.quantity--;
+
+            // Save updated quantity
+            await cart.save();
+        } else {
+            return res.status(400).json({
+                message: "You have only one item"
+            });
+        }
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                null,
+                "Cart Updated successfully"
+            )
+        );
+    }
 });
