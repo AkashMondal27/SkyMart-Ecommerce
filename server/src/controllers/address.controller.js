@@ -9,10 +9,18 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 export const addAddress = asyncHandler(async (req, res) => {
 
     // Get address details from request body
-    const { address, phone } = req.body;
+    const { name ,address, phone } = req.body;
+
+    // Validate required fields
+    if (!name || !address || !phone) {
+        return res.status(400).json({
+            message: "Name, address and phone are required"
+        });
+    }
 
     // Create address for the logged-in user
-    await Address.create({
+    const newAddress =await Address.create({
+        name,
         address,
         phone,
         user: req.user._id
@@ -22,7 +30,7 @@ export const addAddress = asyncHandler(async (req, res) => {
     return res.status(201).json(
         new ApiResponse(
             201,
-            null,
+            newAddress,
             "Address added successfully"
         )
     );

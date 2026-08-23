@@ -38,6 +38,14 @@ const otpTemplate = (otp) => {
             ">
                 SkyMart
             </h1>
+            
+            <p style="
+                margin: 8px 0 0;
+                color: #d1d5db;
+                font-size: 14px;
+            ">
+               Everything You Need, All in One Place.
+            </p>
         </div>
 
         <!-- Content -->

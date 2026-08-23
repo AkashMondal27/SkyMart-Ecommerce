@@ -2,9 +2,15 @@ import mongoose from "mongoose";
 
 
 const addressSchema=new mongoose.Schema({
+    name:{
+        type:String,
+        required:true,
+     
+    },
     address:{
         type:String,
-        required :true
+        required :true,
+
     },
     phone:{
        type :Number,
@@ -15,6 +21,8 @@ const addressSchema=new mongoose.Schema({
         ref:"User",
         required:true
     }
-})
+},{
+        timestamps: true
+    })
 
 export const Address = mongoose.model("Address", addressSchema)
