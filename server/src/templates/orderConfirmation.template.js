@@ -17,7 +17,7 @@ const orderConfirmationTemplate = (
                         border-bottom: 1px solid #e5e7eb;
                         color: #374151;
                     ">
-                        ${product.name}
+                        ${product.productName}
                     </td>
 
                     <td style="

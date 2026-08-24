@@ -50,7 +50,8 @@ export const newOrderCod = asyncHandler(async (req, res) => {
 
         return {
             product: i.product._id,
-            name: i.product.title,
+            // name: i.product.title,
+            productName: i.product.title,
             price: i.product.price,
             quantity: i.quantity
         };
@@ -114,3 +115,51 @@ export const newOrderCod = asyncHandler(async (req, res) => {
 });
 
 
+
+/*=======================================================
+           Get All Orders
+========================================================*/
+
+//user poin of view , show the new order 1st 
+export const getAllOrders = asyncHandler(async (req, res) => {
+    const orders = await Order.find({ user: req.user._id })
+    res.json({ orders: orders.reverse() })
+})
+
+
+//Admin point of view , show new order 1st 
+
+export const getAllOrdersAdmin = asyncHandler(async (req, res) => {
+    if (req.user.role !== "admin") {
+        return res.status(403).json(
+            new ApiError(
+                403,
+                null,
+                "Access denied.You are not a ADMIN !"
+            )
+        );
+    }
+    const order= await Order.find().populate("user").sort({createAt: -1});
+        return res.status(200).json(
+        new ApiResponse(
+            200,
+            order,
+            "You can see thr Newest Orders now "
+        )
+    );
+})
+
+
+// Sngle Order Fetch 
+
+export const getMyOder= asyncHandler(async(req,res)=>{
+    const order= await  Order.findById(req.params.id).populate("items.product").populate("user");
+     return res.status(200).json(
+        new ApiResponse(
+            200,
+            order,
+            "Single Order Fetch SuccessFully "
+        )
+    );
+})
+  
