@@ -1,28 +1,91 @@
 import mongoose from "mongoose";
 
+const addressSchema = new mongoose.Schema(
+    {
+        address: {
+            name: {
+                type: String,
+                required: true,
+                trim: true,
+            },
 
-const addressSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-     
-    },
-    address:{
-        type:String,
-        required :true,
+            phone: {
+                type: String,
+                required: true,
+                trim: true,
+            },
 
+            location: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            post: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            pinCode: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            district: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            state: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+        },
+
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
     },
-    phone:{
-       type :Number,
-       required:true 
-    },
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+    {
+        timestamps: true,
     }
-},{
-        timestamps: true
-    })
+);
 
-export const Address = mongoose.model("Address", addressSchema)
+export const Address = mongoose.model("Address", addressSchema);
+
+
+
+// import mongoose from "mongoose";
+
+
+// const addressSchema=new mongoose.Schema({
+//     // name:{
+//     //     type:String,
+//     //     required:true,
+     
+//     // },
+//     address:{
+//         type:String,
+//         required :true,
+
+//     },
+//     phone:{
+//        type :Number,
+//        required:true 
+//     },
+//     user:{
+//         type:mongoose.Schema.Types.ObjectId,
+//         ref:"User",
+//         required:true
+//     }
+// },{
+//         timestamps: true
+//     })
+
+// export const Address = mongoose.model("Address", addressSchema)
