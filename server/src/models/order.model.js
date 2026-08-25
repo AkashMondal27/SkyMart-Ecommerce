@@ -40,6 +40,10 @@ const orderSchema=new mongoose.Schema({
         type:String,
         required : true
     }  ,
+    status:{
+     type:String,
+     default :"Pending"
+    },
     paidAt:{
         type:String
     },

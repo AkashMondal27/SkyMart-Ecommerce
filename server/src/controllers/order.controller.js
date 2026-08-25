@@ -163,3 +163,53 @@ export const getMyOder= asyncHandler(async(req,res)=>{
     );
 })
   
+
+/*=======================================================
+           Orders Update Status 
+========================================================*/
+
+export const updateStatus = asyncHandler(async (req, res) => {
+
+    // Only admin can update order status
+    if (req.user.role !== "admin") {
+        return res.status(403).json(
+            new ApiError(
+                403,
+                null,
+                "Access denied. You are not an ADMIN!"
+            )
+        );
+    }
+
+    // Find order using order ID from URL
+    const order = await Order.findById(req.params.id);
+
+    // Check if order exists
+    if (!order) {
+        return res.status(404).json(
+            new ApiError(
+                404,
+                null,
+                "Order not found"
+            )
+        );
+    }
+
+    // Get new status from request body
+    const { status } = req.body;
+
+    // Update status
+    order.status = status;
+
+    // Save updated order
+    await order.save();
+
+    // Send response
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            order,
+            "Order status updated successfully"
+        )
+    );
+});
