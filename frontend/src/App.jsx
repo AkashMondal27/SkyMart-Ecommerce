@@ -1,28 +1,24 @@
-import { Button } from "@/components/ui/button";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/home";
+import Login from "./pages/Login";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-6">
-      <h1 className="text-4xl font-bold">
-        SkyMart
-      </h1>
+    <>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
 
-      <div className="flex gap-3">
-        <Button>Click Me</Button>
+    </>
 
-        <Button variant="secondary">
-          Secondary
-        </Button>
-
-        <Button variant="destructive">
-          Delete
-        </Button>
-
-        <Button variant="outline">
-          Outline
-        </Button>
-      </div>
-    </div>
   );
 }
 
