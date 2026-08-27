@@ -2,6 +2,7 @@ import { Home as HomeIcon, ShoppingBag, LogIn, ShoppingCart, User } from 'lucide
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { ModeToggle } from './mode-toggle';
 
 const Navbar = () => {
 
@@ -15,35 +16,50 @@ const Navbar = () => {
     const isAuth = true;
 
     return (
-        <div className='z-50 sticky top-0 bg-zinc-200/50   border-b backdrop:blur '>
-            {/* <div className='container mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between'> */}
+       // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>
+         <div
+    className="
+        sticky
+        top-0
+        z-50
+        w-full
+        border-b
+        border-zinc-200
+        bg-zinc-50
+        shadow-sm
+        dark:border-blue-900/40
+        dark:bg-[#080d18]
+        dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)]
+    "
+>   
             <div className="container mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/*  SkyMart Logo */}
                 <h1 className=' text-2xl font-bold '> <span className='text-blue-400'>Sky</span>Mart</h1>
 
+
+                <ModeToggle /> {/*Use to make the theme dark and light mode  */}
+
                 {/* <ul className=' flex justify-center items-center space-x-6 '> */}
                 <ul
-                    className="
-                fixed bottom-0 left-0 right-0
-                md:static
-                flex justify-around md:justify-center
-                items-center
-                space-x-0 md:space-x-6
-                backdrop-blur
-                border-t md:border-0
-                 bg-zinc-200/50 md:bg-transparent 
-                py-3 md:py-0
-                z-50
-                "
-                >
+                    className=" 
+                    fixed bottom-0 left-0 right-0 md:static      z-50
+                     flex justify-around md:justify-center  items-center
+                     space-x-0 md:space-x-6
+                      backdrop-blur border-t md:border-0
+                      bg-zinc-200/50 md:bg-transparent
+                     dark:bg-[#080d18]/95 md:dark:bg-transparent
+                    dark:shadow-[0_-5px_25px_rgba(37,99,235,0.18)]  md:dark:shadow-none
+                    py-3 md:py-0  " >
+
+
 
                     {/* Home */}
                     <li onClick={() => navigate("/")}
                         className={` w-auto md:w-16 cursor-pointer flex items-center gap-1 transition-colors duration-200
                             ${location.pathname === "/"
                                 ? "text-orange-500 font-bold"
-                                : "text-gray-700 hover:text-orange-500 font-semibold"
+                                : "text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 font-semibold"
                             } 
                              `}
 
@@ -65,7 +81,7 @@ const Navbar = () => {
                         className={`w-auto md:w-24 cursor-pointer flex items-center gap-1 transition-colors duration-200
                             ${location.pathname === "/products"
                                 ? "text-orange-500 font-bold"
-                                : "text-gray-700 hover:text-orange-500 font-semibold"
+                                : "text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 font-semibold"
                             }`}
                     >
                         <ShoppingBag className="w-5 h-5 md:hidden " strokeWidth={location.pathname === "/products" ? 3 : 2} />
@@ -73,10 +89,10 @@ const Navbar = () => {
                     </li>
 
 
-                    {/* Cart */}
+                    {/* Cart
                     <li
                         onClick={() => navigate("/cart")}
-                        className={`w-auto md:w-12 cursor-pointer relative flex items-center transition-colors duration-200
+                        className={`w-auto md:w-12 cursor-pointer relative  inline-flex items-center transition-colors duration-200
                             ${location.pathname === "/cart"
                                 ? "text-orange-500 font-bold"
                                 : "text-gray-700 hover:text-orange-500 font-semibold"
@@ -84,11 +100,31 @@ const Navbar = () => {
                     >
                         <ShoppingCart className="w-5 h-5" strokeWidth={location.pathname === "/cart" ? 3 : 2} />
 
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
                             5
                         </span>
-                    </li>
+                    </li> */}
 
+                    <li
+                        onClick={() => navigate("/cart")}
+                        className={`cursor-pointer transition-colors duration-200
+                               ${location.pathname === "/cart"
+                                ? "text-orange-500 font-bold"
+                                : "text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 font-semibold"
+                            }
+                        `}
+                    >
+                        <div className="relative inline-flex items-center justify-center">
+                            <ShoppingCart
+                                className="w-5 h-5"
+                                strokeWidth={location.pathname === "/cart" ? 3 : 2}
+                            />
+
+                            <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
+                                5
+                            </span>
+                        </div>
+                    </li>
 
 
                     <li className='cursor-pointer'>
@@ -128,6 +164,8 @@ const Navbar = () => {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </li>
+
+
                 </ul>
             </div>
         </div>
