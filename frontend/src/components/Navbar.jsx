@@ -13,7 +13,7 @@ const Navbar = () => {
         alert("Logged Out")
     }
 
-    const isAuth = true;
+    const isAuth = false;
 
     return (
        // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>

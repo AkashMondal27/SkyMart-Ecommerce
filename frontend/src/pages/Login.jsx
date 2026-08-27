@@ -2,8 +2,9 @@ import React from 'react'
 
 const Login = () => {
   return (
-    <div>
-      <h1> We are logged in</h1>
+    <div className='min-h-[50vh]'>
+       
+       
     </div>
   )
 }
