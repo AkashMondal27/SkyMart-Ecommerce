@@ -13,7 +13,8 @@ export function ModeToggle() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger 
+             render={
                 <Button
                     variant="outline"
                     size="icon"
@@ -38,8 +39,8 @@ export function ModeToggle() {
                         dark:hover:bg-blue-950/60
                         dark:hover:border-blue-500/50
                         dark:hover:shadow-[0_0_15px_rgba(59,130,246,0.35)]
-                    "
-                >
+                    ">
+                
 
                 
                     <Sun
@@ -72,8 +73,9 @@ export function ModeToggle() {
                     <span className="sr-only">
                         Toggle theme
                     </span>
-                </Button>
-            </DropdownMenuTrigger>
+                 </Button>
+                }/>
+            {/* </DropdownMenuTrigger> */}
 
             <DropdownMenuContent
                 align="end"

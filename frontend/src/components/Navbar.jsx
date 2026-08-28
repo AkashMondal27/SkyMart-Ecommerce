@@ -48,8 +48,7 @@ const Navbar = () => {
                      space-x-0 md:space-x-6
                       backdrop-blur border-t md:border-0
                       bg-zinc-200/50 md:bg-transparent
-                     dark:bg-[#080d18]/95 md:dark:bg-transparent
-                    dark:shadow-[0_-5px_25px_rgba(37,99,235,0.18)]  md:dark:shadow-none
+                     dark:bg-[#080d18]/95 md:dark:bg-transparent 
                     py-3 md:py-0  " >
 
 
@@ -132,7 +131,7 @@ const Navbar = () => {
                             <DropdownMenuTrigger
                                 className="inline-flex h-9 w-9 items-center justify-center rounded-md cursor-pointer transition-colors duration-200  hover:text-orange-500 hover:bg-orange-50"
                             >
-                                {isAuth ? <User className="h-5 w-5 cursor-pointer" /> : <LogIn className="h-6 w-6 cursor-pointer" />}
+                                {isAuth ? <User className="h-5 w-5 cursor-pointer" /> : <LogIn className="h-5 w-5 cursor-pointer" />}
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent align="end">
@@ -145,7 +144,8 @@ const Navbar = () => {
                                     <DropdownMenuSeparator />
 
                                     {!isAuth ? (
-                                        <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/login")}>
+                                        <DropdownMenuItem className="cursor-pointer" 
+                                            onClick={() => navigate("/login")}>
                                             Login
                                         </DropdownMenuItem>
                                     ) : (
