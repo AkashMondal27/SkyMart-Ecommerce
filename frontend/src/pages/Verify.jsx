@@ -1,122 +1,92 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { Loader2 } from "lucide-react";
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { UserData } from '@/context/UserContext'
+import { Loader } from 'lucide-react'
+import React,{useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { UserData } from "@/context/UserContext";
 
 
 const Verify = () => {
-    const navigate = useNavigate();
 
-    const { btnLoading } = UserData();
+  const [otp, setOtp] = useState("");
+  const navigate=useNavigate();
+  const {btnLoading , loginUser}=UserData();
 
-    const [otp, setOtp] = useState("");
+  const submitHandler = () => {
+    verifyUser();
+  };
 
-    // Get the email saved during login
-    const email = localStorage.getItem("email");
+  const[timer,setTimer]=useState(90);
+  const[canResend ,setCanResend]=useState(false);
 
-    // Handle OTP verification
-    const handleVerify = async (e) => {
-        e.preventDefault();
+  useEffect(()=>{
+    if(timer >0){
+        const interval=setInterval(()=>{
+            setTimer(prev=>prev -1)
+        },1000);
 
-        if (!otp) {
-            return;
-        }
+        return()=>clearInterval(interval);
+    }else{
+        setCanResend(true)
+    }
+  },[timer]);
 
-        try {
-            const { data } = await axios.post(
-                `${server}/api/v1/users/verify`,
-                {
-                    email,
-                    otp,
-                }
-            );
 
-            console.log(data);
+  const formatTime=(time)=>{
+    const minutes=Math.floor(time/60);
+    const seconds=time % 60;
+    return`${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`
 
-            // After successful verification
-            navigate("/");
-        } catch (error) {
-            console.log(error);
-        }
-    };
+  }
 
-    return (
-        <div className="min-h-screen flex items-center justify-center px-4 bg-background">
-            <div className="w-full max-w-md">
-                {/* Card */}
-                <div className="rounded-xl border bg-card p-6 shadow-sm">
-                    {/* Heading */}
-                    <div className="text-center mb-6">
-                        <h1 className="text-2xl font-bold">
-                            Verify Your Email
-                        </h1>
+ const handleResendOtp=async()=>{
+    const email=localStorage.getItem("email")
+        await loginUser(email,navigate);
+        setTimer(90);
+        setCanResend(false);
 
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            Enter the OTP sent to
-                        </p>
+    
+ }
+  return (
+    <div className='min-h-[50vh] w-full'>
+      <Card className="w-[calc(100%-3rem)] max-w-100 mx-auto mt-5">
+        <CardHeader>
+          <CardTitle> Verify User OTP</CardTitle>
+          <CardDescription>
+            Enter the OTP sent to your email. If you don't see it,
+            please check your spam or junk folder.
+          </CardDescription>
+       </CardHeader>
 
-                        <p className="font-medium">
-                            {email}
-                        </p>
-                    </div>
+       <CardContent className="space-y-2">
+        <div className='space-x-1'>
+        <Label> Enter OTP</Label> <br/>
 
-                    {/* Verification form */}
-                    <form onSubmit={handleVerify} className="space-y-5">
-                        <div>
-                            <label
-                                htmlFor="otp"
-                                className="mb-2 block text-sm font-medium"
-                            >
-                                Enter OTP
-                            </label>
-
-                            <input
-                                id="otp"
-                                type="text"
-                                inputMode="numeric"
-                                maxLength={6}
-                                value={otp}
-                                onChange={(e) =>
-                                    setOtp(
-                                        e.target.value.replace(/\D/g, "")
-                                    )
-                                }
-                                placeholder="Enter 6-digit OTP"
-                                className="w-full rounded-md border bg-background px-3 py-2 text-center text-lg tracking-[0.5em] outline-none focus:ring-2 focus:ring-primary"
-                            />
-                        </div>
-
-                        {/* Verify button */}
-                        <button
-                            type="submit"
-                            disabled={btnLoading || otp.length !== 6}
-                            className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-primary-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                            {btnLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Verifying...
-                                </>
-                            ) : (
-                                "Verify OTP"
-                            )}
-                        </button>
-                    </form>
-
-                    {/* Back to login */}
-                    <button
-                        type="button"
-                        onClick={() => navigate("/login")}
-                        className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground"
-                    >
-                        ← Back to Login
-                    </button>
-                </div>
-            </div>
+        <Input type="number" value={otp} onChange={(e)=>setOtp(e.target.value)}/>
         </div>
-    );
-};
+       </CardContent>
+
+       <CardFooter >
+        <Button  disabled={btnLoading}  onClick={submitHandler}>
+          {btnLoading ?<Loader/>:"Submit"}
+        </Button>
+       </CardFooter>
+
+       <div className='flex flex-col justify-center items-center w-[200px] m-auto '>
+        < p className=' mb-2'>
+        {canResend ?"You can now Resend OTP":
+         `Time remaing :${formatTime(timer)}`
+        }
+        </p>
+        <Button  onClick={handleResendOtp}
+            className="mb-4 " disabled={!canResend}>Resend OTP</Button>
+       </div>
+      </Card>
+    </div>
+  )
+}
 
 export default Verify;
