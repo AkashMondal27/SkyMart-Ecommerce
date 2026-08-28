@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { UserData } from '@/context/UserContext'
+import { Loader } from 'lucide-react'
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -12,7 +13,7 @@ const Login = () => {
 
   const[email ,setEmail]=useState("");
 
-  const{loginUser}=UserData();
+  const{loginUser, btnLoading}=UserData();
   const navigate=useNavigate();
 
   const submitHandler=()=>{
@@ -38,7 +39,9 @@ const Login = () => {
        </CardContent>
 
        <CardFooter >
-        <Button onClick={submitHandler}>Submit</Button>
+        <Button  disabled={btnLoading}  onClick={submitHandler}>
+          {btnLoading ?<Loader/>:"Submit"}
+        </Button>
        </CardFooter>
       </Card>
     </div>
