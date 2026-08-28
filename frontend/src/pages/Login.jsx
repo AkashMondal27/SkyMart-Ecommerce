@@ -2,17 +2,22 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { UserData } from '@/context/UserContext'
 import React,{useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 
 
 
 const Login = () => {
 
   const[email ,setEmail]=useState("");
-  const submitHandler=()=>{
-    console.log(email);
-  }
 
+  const{loginUser}=UserData();
+  const navigate=useNavigate();
+
+  const submitHandler=()=>{
+    loginUser(email,navigate);
+  }
 
   return (
     <div className='min-h-[50vh] w-full'>

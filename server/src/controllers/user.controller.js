@@ -12,16 +12,71 @@ import bcrypt from "bcryptjs";
   Send OTP to user email for login or registration
 =============================================================== */
 
+//  Allowed email providers
+const allowedEmailDomains = [
+    // Google
+    "gmail.com",
+
+    // Microsoft
+    "outlook.com",
+    "hotmail.com",
+    "live.com",
+    "msn.com",
+
+    // Yahoo
+    "yahoo.com",
+    "ymail.com",
+    "rocketmail.com",
+
+    // Apple
+    "icloud.com",
+    "me.com",
+    "mac.com",
+
+    // Proton
+    "proton.me",
+    "protonmail.com",
+
+    // Other popular providers
+    "aol.com",
+    "gmx.com",
+    "mail.com",
+    "zoho.com",
+    "yandex.com",
+    "fastmail.com",
+];
+
 export const loginUser = asyncHandler(async (req, res) => {
 
     const { email } = req.body;
 
     // 1. Validate email
     if (!email || email.trim() === "") {
-        throw new ApiError(400, "Email is required");
-    }
-
+    return res.status(400).json({
+        success: false,
+        message: "Email is Required"
+    });
+}
+ 
     const lowerCaseEmail = email.toLowerCase().trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailRegex.test(lowerCaseEmail)) {
+    throw new ApiError(400, "Please enter a valid email address");
+}
+
+
+
+//  Get domain from email
+const emailDomain = lowerCaseEmail.split("@")[1];
+
+//  Check allowed domain
+if (!allowedEmailDomains.includes(emailDomain)) {
+    throw new ApiError(
+        400,
+        "Please enter a valid email address"
+    );
+}
 
     // 2. Generate 6-digit OTP
     const otp = Math.floor(

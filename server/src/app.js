@@ -1,6 +1,13 @@
 import express from "express";
+import cors from"cors"
 
 const app = express();
+
+// CORS
+app.use(cors({
+    origin: "http://localhost:5173", // your React frontend
+    credentials: true
+}));
 
 
 //setting to get different types of data --Json , Url , public files
@@ -28,6 +35,20 @@ app.use("/api/v1/stats", statsRoutes);
 
 app.get("/", (req, res) => {
     res.send("SkyMart API is running successfully 🚀");
+});
+
+
+
+//  GLOBAL ERROR HANDLER
+app.use((err, req, res, next) => {
+
+    return res.status(err.statuscode || 500).json({
+        success: false,
+        message: err.message || "Something went wrong",
+        data: null,
+        error: err.error || []
+    });
+
 });
 
 export default app;
