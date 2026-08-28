@@ -1,8 +1,10 @@
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import CustomToaster from "../notifications/CustomToaster";
 import { validateEmail } from "@/validation/emailValidation";
+import { validateOtp } from "@/validation/otpValidation";
+import Cookies from "js-cookie";
 
 const UserContext = createContext();
 
@@ -13,7 +15,8 @@ export const UserProvider = ({ children, server }) => {
     const [isAuth, setIsAuth] = useState(false);
 
 
-    // Login user
+    //==================== Login User========================
+
     const loginUser = async (email, navigate) => {
 
         // 1. Validate email first in Frontend 
@@ -75,6 +78,69 @@ export const UserProvider = ({ children, server }) => {
         }
     };
 
+
+   
+
+//=================== Verify User ==========================
+
+const verifyUser = async (email, otp, navigate) => {
+
+    // 1. Validate OTP in frontend
+    const validation = validateOtp(otp);
+
+    if (!validation.valid) {
+        toast.error(validation.message);
+        return;
+    }
+
+    setBtnLoading(true);
+    
+
+    try {
+
+        // 2. Send email + OTP to backend
+        const { data } = await axios.post(
+            `${server}/api/v1/users/verify`,
+            {
+                email,
+                otp: validation.otp,
+            }
+        );
+
+        toast.success(data.message);
+
+        // 3. Remove temporary email
+        localStorage.removeItem("email");
+
+        // 4. Save authentication state
+        setIsAuth(true);
+        setUser(data.data?.user);
+
+        // 5. Store JWT
+        Cookies.set("token", data.data?.token, {
+            expires: 15,
+            secure: true,
+            sameSite: "strict",
+            path: "/",
+        });
+
+        // 6. Go to home page
+        navigate("/");
+
+    } catch (error) {
+
+        toast.error(
+            error.response?.data?.message ||
+            "Something went wrong"
+        );
+
+    } finally {
+
+        setBtnLoading(false);
+    }
+};
+
+
     return (
         <UserContext.Provider
             value={{
@@ -83,6 +149,8 @@ export const UserProvider = ({ children, server }) => {
                 btnLoading,
                 isAuth,
                 loginUser,
+                verifyUser
+
             }}
         >
             {children}
