@@ -6,7 +6,9 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { UserData } from "./context/UserContext";
 import Verify from "./pages/Verify";
-
+import AboutUs from "./pages/AboutUs";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function App() {
 
@@ -20,6 +22,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/verify" element={<Verify />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />   
         </Routes>
         <Footer />
       </BrowserRouter>
