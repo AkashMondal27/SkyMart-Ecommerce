@@ -6,7 +6,7 @@ const otpTemplate = (otp) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyMart OTP Verification</title>
+    <title>SkyCart OTP Verification</title>
 </head>
 
 <body style="
@@ -36,7 +36,7 @@ const otpTemplate = (otp) => {
                 color: white;
                 font-size: 30px;
             ">
-                SkyMart
+                SkyCart
             </h1>
             
             <p style="
@@ -67,7 +67,7 @@ const otpTemplate = (otp) => {
                 line-height: 1.6;
             ">
                 Use the verification code below to continue
-                creating your SkyMart account.
+                creating your SkyCart account.
             </p>
 
             <!-- OTP -->
@@ -120,7 +120,7 @@ const otpTemplate = (otp) => {
                 color: #9ca3af;
                 font-size: 12px;
             ">
-                © ${new Date().getFullYear()} SkyMart. All rights reserved.
+                © ${new Date().getFullYear()} SkyCart. All rights reserved.
             </p>
         </div>
 

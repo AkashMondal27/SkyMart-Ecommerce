@@ -98,7 +98,7 @@ export const newOrderCod = asyncHandler(async (req, res) => {
     //Send condirmation mail to user
     await sendOrderConfirmation({
         email: req.user.email,
-        subject: "SkyMart - Order Confirmation",
+        subject: "SkyCart - Order Confirmation",
         orderId: order._id,
         products: items,
         totalAmount: subTotal
@@ -139,8 +139,8 @@ export const getAllOrdersAdmin = asyncHandler(async (req, res) => {
             )
         );
     }
-    const order= await Order.find().populate("user").sort({createAt: -1});
-        return res.status(200).json(
+    const order = await Order.find().populate("user").sort({ createAt: -1 });
+    return res.status(200).json(
         new ApiResponse(
             200,
             order,
@@ -152,9 +152,9 @@ export const getAllOrdersAdmin = asyncHandler(async (req, res) => {
 
 // Sngle Order Fetch 
 
-export const getMyOder= asyncHandler(async(req,res)=>{
-    const order= await  Order.findById(req.params.id).populate("items.product").populate("user");
-     return res.status(200).json(
+export const getMyOder = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id).populate("items.product").populate("user");
+    return res.status(200).json(
         new ApiResponse(
             200,
             order,
@@ -162,7 +162,7 @@ export const getMyOder= asyncHandler(async(req,res)=>{
         )
     );
 })
-  
+
 
 /*=======================================================
            Orders Update Status 

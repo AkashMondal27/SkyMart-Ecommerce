@@ -16,9 +16,9 @@ const Navbar = () => {
     const isAuth = false;
 
     return (
-       // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>
-         <div
-    className="
+        // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>
+        <div
+            className="
         sticky
         top-0
         z-50
@@ -31,11 +31,11 @@ const Navbar = () => {
         dark:bg-[#080d18]
         dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)]
     "
->   
+        >
             <div className="container mx-auto px-6 py-4 flex items-center justify-between">
 
-                {/*  SkyMart Logo */}
-                <h1 className=' text-2xl font-bold '> <span className='text-blue-400'>Sky</span>Mart</h1>
+                {/*  SkyCart Logo */}
+                <h1 className=' text-2xl font-bold '> <span className='text-blue-400'>Sky</span>Cart</h1>
 
 
                 <ModeToggle /> {/*Use to make the theme dark and light mode  */}
@@ -144,7 +144,7 @@ const Navbar = () => {
                                     <DropdownMenuSeparator />
 
                                     {!isAuth ? (
-                                        <DropdownMenuItem className="cursor-pointer" 
+                                        <DropdownMenuItem className="cursor-pointer"
                                             onClick={() => navigate("/login")}>
                                             Login
                                         </DropdownMenuItem>

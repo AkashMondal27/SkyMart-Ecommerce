@@ -36,13 +36,13 @@ const sendOrderConfirmation = async ({
 
     // Send the confirmation email
     await transporter.sendMail({
-        from: `"SkyMart" <${process.env.SMTP_GMAIL}>`,
+        from: `"SkyCart" <${process.env.SMTP_GMAIL}>`,
         to: email,
         subject: subject,
 
         // Plain-text fallback
         text: `
-Thank you for your order from SkyMart.
+Thank you for your order from SkyCart.
 
 Order ID: ${orderId}
 
@@ -50,7 +50,7 @@ Total Amount: ₹${Number(totalAmount).toFixed(2)}
 
 Your order has been successfully placed.
 
-Thank you for shopping with SkyMart.
+Thank you for shopping with SkyCart.
         `,
 
         // HTML email

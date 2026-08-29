@@ -60,7 +60,7 @@ const Footer = () => {
                             </span>
 
                             <span className="text-zinc-800 dark:text-white">
-                                Mart
+                                Cart
                             </span>
                         </Link>
 
@@ -261,7 +261,7 @@ const Footer = () => {
                                 </Link>
                             </li>
 
-                        
+
 
                             <li>
                                 <Link
@@ -328,7 +328,7 @@ const Footer = () => {
                             {/* Location */}
 
                             <div>
-                                
+
 
                                 <p className="mt-1 leading-6">
                                     Dubrajpur, Birbhum, 731123, West Bengal,India
@@ -421,7 +421,7 @@ const Footer = () => {
                             dark:text-zinc-400
                         "
                     >
-                        © {new Date().getFullYear()} SkyMart.
+                        © {new Date().getFullYear()} SkyCart.
                         All rights reserved.
                     </p>
 

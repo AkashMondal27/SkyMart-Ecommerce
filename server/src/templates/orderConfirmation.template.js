@@ -95,7 +95,7 @@ const orderConfirmationTemplate = (
                 color: #ffffff;
                 font-size: 28px;
             ">
-                SkyMart
+                SkyCart
             </h1>
 
             <p style="
@@ -260,7 +260,7 @@ const orderConfirmationTemplate = (
                     color: #4b5563;
                     font-size: 14px;
                 ">
-                    Thank you for shopping with SkyMart.
+                    Thank you for shopping with SkyCart.
                 </p>
 
                 <p style="
@@ -288,7 +288,7 @@ const orderConfirmationTemplate = (
                 color: #9ca3af;
                 font-size: 12px;
             ">
-                © ${new Date().getFullYear()} SkyMart. All rights reserved.
+                © ${new Date().getFullYear()} SkyCart. All rights reserved.
             </p>
 
         </div>

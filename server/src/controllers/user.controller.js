@@ -52,38 +52,38 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     // 1. Validate email
     if (!email || email.trim() === "") {
-    return res.status(400).json({
-        success: false,
-        message: "Email is Required"
-    });
-}
- 
+        return res.status(400).json({
+            success: false,
+            message: "Email is Required"
+        });
+    }
+
     const lowerCaseEmail = email.toLowerCase().trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-if (!emailRegex.test(lowerCaseEmail)) {
-    throw new ApiError(400, "Please enter a valid email address");
-}
+    if (!emailRegex.test(lowerCaseEmail)) {
+        throw new ApiError(400, "Please enter a valid email address");
+    }
 
 
 
-//  Get domain from email
-const emailDomain = lowerCaseEmail.split("@")[1];
+    //  Get domain from email
+    const emailDomain = lowerCaseEmail.split("@")[1];
 
-//  Check allowed domain
-if (!allowedEmailDomains.includes(emailDomain)) {
-    throw new ApiError(
-        400,
-        "Please enter a valid email address"
-    );
-}
+    //  Check allowed domain
+    if (!allowedEmailDomains.includes(emailDomain)) {
+        throw new ApiError(
+            400,
+            "Please enter a valid email address"
+        );
+    }
 
     // 2. Generate 6-digit OTP
     const otp = Math.floor(
         100000 + Math.random() * 900000
     ).toString();
 
-    const subject = "SkyMart - Email Verification";
+    const subject = "SkyCart - Email Verification";
 
     // 3. Delete previous OTP for this email
     await OTP.deleteMany({
@@ -116,7 +116,7 @@ if (!allowedEmailDomains.includes(emailDomain)) {
     );
 
 
-    
+
     // 7. Send response
     return res.status(200).json(
         new ApiResponse(
@@ -135,7 +135,7 @@ if (!allowedEmailDomains.includes(emailDomain)) {
 export const verifyUser = asyncHandler(async (req, res) => {
     const { email, otp } = req.body;
 
-     // 1. Validate input
+    // 1. Validate input
     if (!email || !otp) {
         throw new ApiError(
             400,
@@ -147,13 +147,13 @@ export const verifyUser = asyncHandler(async (req, res) => {
 
     // 2. Find OTP using emai/
     const haveOtp = await OTP.findOne({
-        email: lowerCaseEmail,   
+        email: lowerCaseEmail,
     });
 
     if (!haveOtp) {
         throw new ApiError(
-            400, 
-           "OTP not found or expired"
+            400,
+            "OTP not found or expired"
         );
     };
 
@@ -171,7 +171,7 @@ export const verifyUser = asyncHandler(async (req, res) => {
         );
     }
 
- // 4. Compare entered OTP with hashed OTP
+    // 4. Compare entered OTP with hashed OTP
     const isOtpCorrect = await bcrypt.compare(
         otp.toString(),
         haveOtp.otp
@@ -184,15 +184,15 @@ export const verifyUser = asyncHandler(async (req, res) => {
         );
     }
 
- // 5. Find user
+    // 5. Find user
     let user = await User.findOne({
         email: lowerCaseEmail
     });
- 
+
     /*-------------------------------------------------------------------
        if user exists, generate JWT token and return success response
-    --------------------------------------------------------------------*/ 
-    if (user) { 
+    --------------------------------------------------------------------*/
+    if (user) {
         const token = jwt.sign(
             {
                 _id: user._id,
@@ -219,11 +219,11 @@ export const verifyUser = asyncHandler(async (req, res) => {
                 "User logged in successfully 👍"
             )
         );
-    } 
+    }
     /*-------------------------------------------------------------------
        if user does not exist, create new user, generate JWT token and return success response
     --------------------------------------------------------------------*/
-    else { 
+    else {
         user = await User.create({
             email: lowerCaseEmail,
             isVerified: true

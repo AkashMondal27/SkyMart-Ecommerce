@@ -14,12 +14,12 @@ const sendOtp = async (email, subject, otp) => {
     });
 
     await transporter.sendMail({
-        from: `"SkyMart" <${process.env.SMTP_GMAIL}>`,
+        from: `"SkyCart" <${process.env.SMTP_GMAIL}>`,
         to: email,
         subject: subject,
 
         // Fallback for email clients that don't support HTML
-        text: `Your SkyMart OTP is: ${otp}. This OTP will expire in 5 minutes.`,
+        text: `Your SkyCart OTP is: ${otp}. This OTP will expire in 5 minutes.`,
 
         // HTML email
         html: otpTemplate(otp)
