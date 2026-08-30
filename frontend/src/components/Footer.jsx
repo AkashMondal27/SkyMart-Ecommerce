@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
     FaFacebookF,
     FaInstagram,
@@ -242,60 +243,58 @@ const Footer = () => {
                         >
                             Company
                         </h3>
-
                         <ul className="mt-4 space-y-3">
 
-                            <li>
-                                <Link
-                                    to="/about"
-                                    className="
-                                        text-sm
-                                        text-zinc-500
-                                        transition-colors
-                                        hover:text-orange-500
-                                        dark:text-zinc-400
-                                        dark:hover:text-orange-400
-                                    "
-                                >
-                                    About Us
-                                </Link>
-                            </li>
+    {/* About Us */}
+    <li>
+        <NavLink
+            to="/about"
+            className={({ isActive }) =>
+                `text-sm transition-colors ${
+                    isActive
+                        ? "text-orange-500 font-bold dark:text-orange-400"
+                        : "text-zinc-500 hover:text-orange-500 dark:text-zinc-400 dark:hover:text-orange-400 font-semibold"
+                }`
+            }
+        >
+            About Us
+        </NavLink>
+    </li>
 
+    {/* Terms & Conditions */}
+    <li>
+        <NavLink
+            to="/terms"
+            className={({ isActive }) =>
+                `text-sm transition-colors ${
+                    isActive
+                        ? "text-orange-500 font-bold dark:text-orange-400"
+                        : "text-zinc-500 hover:text-orange-500 dark:text-zinc-400 dark:hover:text-orange-400 font-semibold"
+                }`
+            }
+        >
+            Terms & Conditions
+        </NavLink>
+    </li>
 
+    {/* Privacy Policy */}
+    <li>
+        <NavLink
+            to="/privacy"
+            className={({ isActive }) =>
+                `text-sm transition-colors ${
+                    isActive
+                        ? "text-orange-500 font-bold dark:text-orange-400"
+                        : "text-zinc-500 hover:text-orange-500 dark:text-zinc-400 dark:hover:text-orange-400 font-semibold"
+                }`
+            }
+        >
+            Privacy Policy
+        </NavLink>
+    </li>
 
-                            <li>
-                                <Link
-                                    to="/terms"
-                                    className="
-                                        text-sm
-                                        text-zinc-500
-                                        transition-colors
-                                        hover:text-orange-500
-                                        dark:text-zinc-400
-                                        dark:hover:text-orange-400
-                                    "
-                                >
-                                    Terms & Conditions
-                                </Link>
-                            </li>
+</ul>
 
-                            <li>
-                                <Link
-                                    to="/privacy"
-                                    className="
-                                        text-sm
-                                        text-zinc-500
-                                        transition-colors
-                                        hover:text-orange-500
-                                        dark:text-zinc-400
-                                        dark:hover:text-orange-400
-                                    "
-                                >
-                                    Privacy Policy
-                                </Link>
-                            </li>
-
-                        </ul>
                     </div>
 
 

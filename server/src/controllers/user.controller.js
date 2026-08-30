@@ -133,13 +133,13 @@ export const loginUser = asyncHandler(async (req, res) => {
 ========================================================*/
 
 export const verifyUser = asyncHandler(async (req, res) => {
-    const { email, otp } = req.body;
+    const { name,email, otp } = req.body;
 
     // 1. Validate input
-    if (!email || !otp) {
+    if (  !name||!email || !otp) {
         throw new ApiError(
             400,
-            "Email and OTP are required"
+            " Name ,Email and OTP are required"
         );
     }
 
@@ -193,6 +193,11 @@ export const verifyUser = asyncHandler(async (req, res) => {
        if user exists, generate JWT token and return success response
     --------------------------------------------------------------------*/
     if (user) {
+        user.name = name;
+        user.isVerified = true;
+
+        await user.save();
+
         const token = jwt.sign(
             {
                 _id: user._id,
@@ -211,6 +216,7 @@ export const verifyUser = asyncHandler(async (req, res) => {
                 {
                     user: {
                         _id: user._id,
+                        name: user.name,
                         email: user.email,
                         isVerified: user.isVerified
                     },
@@ -225,6 +231,7 @@ export const verifyUser = asyncHandler(async (req, res) => {
     --------------------------------------------------------------------*/
     else {
         user = await User.create({
+            name,
             email: lowerCaseEmail,
             isVerified: true
         });
@@ -244,7 +251,9 @@ export const verifyUser = asyncHandler(async (req, res) => {
                 200,
                 {
                     user: {
+                        
                         _id: user._id,
+                        name: user.name,
                         email: user.email,
                         isVerified: user.isVerified
                     },

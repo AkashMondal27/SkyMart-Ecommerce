@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CustomToaster from "../notifications/CustomToaster";
 import { validateEmail } from "@/validation/emailValidation";
@@ -17,23 +17,30 @@ export const UserProvider = ({ children, server }) => {
 
     //==================== Login User========================
 
-    const loginUser = async (email, navigate) => {
+    const loginUser = async (name ,email, navigate) => {
 
-        // 1. Validate email first in Frontend 
+        // Validate name
+      if (!name || name.trim() === "") {
+        toast.error("Name is required");
+        return;
+      }
+
+       const cleanName = name.trim();
+
+        //  Validate email first in Frontend 
         const validation = validateEmail(email);
 
-    if (!validation.valid) {
-        toast.error(validation.message);
-        return;
-    }
+        if (!validation.valid) {
+            toast.error(validation.message);
+            return;
+        }
 
-    const cleanEmail = validation.email;
+        const cleanEmail = validation.email;
 
         setBtnLoading(true);
 
-        // make a 10 seconds loading effect 
-
-        let seconds = 10;
+        // make a 15 seconds loading effect 
+        let seconds = 15;
 
         const toastId = toast.loading(`Sending OTP... ${seconds}s`);
 
@@ -52,9 +59,11 @@ export const UserProvider = ({ children, server }) => {
             // Send login request to backend
             const { data } = await axios.post(
                 `${server}/api/v1/users/login`,
-                { email:cleanEmail, }
+                { 
+                    name: cleanName,
+                    email: cleanEmail, 
+                }
             );
-
 
             clearInterval(countdown);
 
@@ -62,14 +71,17 @@ export const UserProvider = ({ children, server }) => {
                 id: toastId,
             });
 
-            // Store email for verification & Go to verification page
+            // Store name & email temporarily for verification & Go to verification page
+            localStorage.setItem("name", cleanName);
             localStorage.setItem("email", cleanEmail);
             navigate("/verify");
+
         } catch (error) {
             clearInterval(countdown);
             toast.error(
-                error.response?.data?.message || "Something went wrong",{
-                    id: toastId,
+                error.response?.data?.message || "Something went wrong", 
+                {
+                id: toastId,
                 }
             );
         } finally {
@@ -79,67 +91,125 @@ export const UserProvider = ({ children, server }) => {
     };
 
 
-   
 
-//=================== Verify User ==========================
 
-const verifyUser = async (email, otp, navigate) => {
+    //=================== Verify User ==========================
 
-    // 1. Validate OTP in frontend
-    const validation = validateOtp(otp);
+    const verifyUser = async (name,email, otp, navigate) => {
 
-    if (!validation.valid) {
-        toast.error(validation.message);
-        return;
-    }
+        // 1. Validate OTP in frontend
+        const validation = validateOtp(otp);
 
-    setBtnLoading(true);
-    
+        if (!validation.valid) {
+            toast.error(validation.message);
+            return;
+        }
 
-    try {
+        setBtnLoading(true);
 
-        // 2. Send email + OTP to backend
-        const { data } = await axios.post(
-            `${server}/api/v1/users/verify`,
+
+        try {
+
+            // 2. Send email + OTP to backend
+            const { data } = await axios.post(
+                `${server}/api/v1/users/verify`,
+                {
+                    name,
+                    email,
+                    otp: validation.otp,
+                }
+            );
+
+            toast.success(data.message);
+
+            // 3. Remove temporary name & email
+            localStorage.removeItem("name");
+            localStorage.removeItem("email");
+
+            // 4. Save authentication state
+            setIsAuth(true);
+            setUser(data.data?.user);
+
+            // 5. Store JWT
+            Cookies.set("token", data.data?.token, {
+                expires: 15,
+                secure: true,
+                sameSite: "strict",
+                path: "/",
+            });
+
+            // 6. Go to home page
+            navigate("/");
+
+        } catch (error) {
+
+            toast.error(
+                error.response?.data?.message ||
+                "Something went wrong"
+            );
+
+        } finally {
+
+            setBtnLoading(false);
+        }
+    };
+
+    //========= User Profile Fetch =========================
+     /*const fetchUser = async () => {
+        try {
+            const { data } = await axios.get(`${server}/api/v1/users/me`,{
+                headers:{
+                    token:Cookies.get("token"),
+                }
+            });
+
+            setIsAuth(true)
+            setUser(data.user)
+            setLoading(false)
+             
+        } catch (error) {
+            console.log(error);
+            setIsAuth(false)
+            setLoading(false);
+        }
+    };
+        useEffect(()=>{
+            fetchUser();
+        },[server])   // my "fetchUser" depends on server,*/
+      
+  const fetchUser = async () => {
+     const token = Cookies.get("token");
+
+      console.log("TOKEN:", token);
+      console.log("SERVER:", server);
+
+      try {
+        const { data } = await axios.get(
+            `${server}/api/v1/users/me`,
             {
-                email,
-                otp: validation.otp,
+                headers: {
+                    token: token,
+                },
             }
-        );
+         );
 
-        toast.success(data.message);
+         console.log("USER DATA:", data);
 
-        // 3. Remove temporary email
-        localStorage.removeItem("email");
+         setIsAuth(true);
+         setUser(data.user);
+         setLoading(false);
+        } catch (error) {
+          console.log("ME ERROR:", error.response?.data);
+          console.log("STATUS:", error.response?.status);
 
-        // 4. Save authentication state
-        setIsAuth(true);
-        setUser(data.data?.user);
-
-        // 5. Store JWT
-        Cookies.set("token", data.data?.token, {
-            expires: 15,
-            secure: true,
-            sameSite: "strict",
-            path: "/",
-        });
-
-        // 6. Go to home page
-        navigate("/");
-
-    } catch (error) {
-
-        toast.error(
-            error.response?.data?.message ||
-            "Something went wrong"
-        );
-
-    } finally {
-
-        setBtnLoading(false);
-    }
+          setIsAuth(false);
+          setLoading(false);
+        }
 };
 
+useEffect(() => {
+    fetchUser();
+}, [server]);
 
     return (
         <UserContext.Provider
@@ -157,6 +227,7 @@ const verifyUser = async (email, otp, navigate) => {
             <CustomToaster />
         </UserContext.Provider>
     );
+
 };
 
 // Custom hook for accessing user context

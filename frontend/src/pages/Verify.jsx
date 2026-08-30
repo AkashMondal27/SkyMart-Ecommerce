@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { UserData } from '@/context/UserContext'
-import { Loader } from 'lucide-react'
+import { Loader, ArrowLeft } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -13,13 +13,16 @@ const Verify = () => {
 
     const [otp, setOtp] = useState("");
     const navigate = useNavigate();
-    const { btnLoading,  loginUser,verifyUser, } = UserData();
+    const { btnLoading, loginUser, verifyUser, } = UserData();
 
+    // Verify the entered OTP and complete the login process.
     const submitHandler = () => {
-    const email = localStorage.getItem("email");
-        verifyUser(email, otp, navigate);
+        const name = localStorage.getItem("name");
+        const email = localStorage.getItem("email");
+        verifyUser(name, email, otp, navigate);
     };
 
+    // Start a 90-second countdown before allowing the user to resend OTP.
     const [timer, setTimer] = useState(90);
     const [canResend, setCanResend] = useState(false);
 
@@ -29,7 +32,8 @@ const Verify = () => {
                 setTimer(prev => prev - 1)
             }, 1000);
 
-            return () => clearInterval(interval);
+            return () => clearInterval(interval);  // Clean up the timer when it is no longer needed.
+
         } else {
             setCanResend(true)
         }
@@ -44,8 +48,9 @@ const Verify = () => {
     }
 
     const handleResendOtp = async () => {
+        const name = localStorage.getItem("name");
         const email = localStorage.getItem("email")
-        await loginUser(email, navigate);
+        await loginUser(name, email, navigate);
         setTimer(90);
         setCanResend(false);
 
@@ -53,6 +58,22 @@ const Verify = () => {
     }
     return (
         <div className='min-h-[50vh] w-full'>
+            {/* Back to login so user can correct name or email */}
+            <div className="w-[calc(100%-3rem)] max-w-100 mx-auto mt-5">
+                <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => {
+                        localStorage.removeItem("name");
+                        localStorage.removeItem("email");
+                        navigate("/login");
+                    }}
+                    className="mb-2   dark:hover:bg-white/10 dark:hover:text-white">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Login
+                </Button>
+            </div>
+
             <Card className="w-[calc(100%-3rem)] max-w-100 mx-auto mt-5">
                 <CardHeader>
                     <CardTitle> Verify User OTP</CardTitle>
@@ -65,8 +86,16 @@ const Verify = () => {
                 <CardContent className="space-y-2">
                     <div className='space-x-1'>
                         <Label> Enter OTP</Label> <br />
+                       
+                        <Input
+                            type="text"
+                            inputMode="numeric"
+                            placeholder="Enter 6 digit OTP"
+                            maxLength={6}
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                        />
 
-                        <Input type="number" value={otp} onChange={(e) => setOtp(e.target.value)} />
                     </div>
                 </CardContent>
 
