@@ -9,25 +9,30 @@ import Verify from "./pages/Verify";
 import AboutUs from "./pages/AboutUs";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Loading from "./components/Loading";
 
 function App() {
 
-  const { }=UserData();
+  const { isAuth ,loading}=UserData();
  
   return (
     <>
-      <BrowserRouter>
+      {loading ?(
+        <Loading/>
+      ) :(
+        <BrowserRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/verify" element={<Verify />} />
+          <Route path="/login" element={isAuth ? <Home/> :<Login />} />
+          <Route path="/verify" element={isAuth ? <Home/> :<Verify />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />   
         </Routes>
         <Footer />
       </BrowserRouter>
+      )}
 
     </>
 

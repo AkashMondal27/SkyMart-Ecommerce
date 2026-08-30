@@ -60,7 +60,7 @@ const Footer = () => {
                                 Sky
                             </span>
 
-                            <span className="text-zinc-800 dark:text-white">
+                            <span className='text-orange-400'>
                                 Cart
                             </span>
                         </Link>

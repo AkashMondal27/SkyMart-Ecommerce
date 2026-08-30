@@ -35,7 +35,7 @@ const Navbar = () => {
             <div className="container mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/*  SkyCart Logo */}
-                <h1 className=' text-2xl font-bold '> <span className='text-blue-400'>Sky</span>Cart</h1>
+                <h1 className=' text-2xl font-bold '> <span className='text-blue-400'>Sky</span><span className='text-orange-400'>Cart</span></h1>
 
 
                 <ModeToggle /> {/*Use to make the theme dark and light mode  */}
