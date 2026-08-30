@@ -1,13 +1,12 @@
-import React from 'react'
+import React from "react";
+import Hero from "@/components/Hero";
 
 const Home = () => {
-  return (
-    
-    <div className='min-h-[50vh] w-full'>
+    return (
+        <main className="w-full">
+            <Hero />
+        </main>
+    );
+};
 
-    hlw
-    </div>
-  )
-}
-
-export default Home
+export default Home;

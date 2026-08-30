@@ -10,6 +10,7 @@ import AboutUs from "./pages/AboutUs";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Loading from "./components/Loading";
+import Products from "./pages/Products";
 
 function App() {
 
@@ -26,6 +27,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={isAuth ? <Home/> :<Login />} />
           <Route path="/verify" element={isAuth ? <Home/> :<Verify />} />
+           <Route path="/products" element={<Products/>} />
+
+          //Footer Routes
           <Route path="/about" element={<AboutUs />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />   
