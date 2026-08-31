@@ -13,7 +13,7 @@ const Navbar = () => {
         alert("Logged Out")
     }
 
-    const isAuth = false;
+    const isAuth = true;
 
     return (
         // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>
@@ -88,21 +88,7 @@ const Navbar = () => {
                     </li>
 
 
-                    {/* Cart
-                    <li
-                        onClick={() => navigate("/cart")}
-                        className={`w-auto md:w-12 cursor-pointer relative  inline-flex items-center transition-colors duration-200
-                            ${location.pathname === "/cart"
-                                ? "text-orange-500 font-bold"
-                                : "text-gray-700 hover:text-orange-500 font-semibold"
-                            }`}
-                    >
-                        <ShoppingCart className="w-5 h-5" strokeWidth={location.pathname === "/cart" ? 3 : 2} />
-
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
-                            5
-                        </span>
-                    </li> */}
+                    
 
                     <li
                         onClick={() => navigate("/cart")}
