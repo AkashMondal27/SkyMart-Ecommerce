@@ -155,27 +155,7 @@ export const UserProvider = ({ children, server }) => {
     };
 
     //========= User Profile Fetch =========================
-     /*const fetchUser = async () => {
-        try {
-            const { data } = await axios.get(`${server}/api/v1/users/me`,{
-                headers:{
-                    token:Cookies.get("token"),
-                }
-            });
-
-            setIsAuth(true)
-            setUser(data.user)
-            setLoading(false)
-             
-        } catch (error) {
-            console.log(error);
-            setIsAuth(false)
-            setLoading(false);
-        }
-    };
-        useEffect(()=>{
-            fetchUser();
-        },[server])   // my "fetchUser" depends on server,*/
+    
       
   const fetchUser = async () => {
      const token = Cookies.get("token");

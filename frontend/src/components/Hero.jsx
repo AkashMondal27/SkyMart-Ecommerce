@@ -2,13 +2,15 @@ import React from "react";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { ProductData } from "@/context/ProductContext";
 
 const Hero = () => {
     const navigate = useNavigate();
+   
 
     return (
         <section
-            className="relative w-full h-[calc(100vh-100px)] bg-cover bg-center"
+            className="relative w-full h-[70vh] bg-cover bg-center"
             style={{
                 backgroundImage:
                     'linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url("/bg image2.jpg")',
@@ -27,7 +29,7 @@ const Hero = () => {
                     <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 drop-shadow-lg">
                         Everything You Love,
                         <br />
-                        <span className="text-orange-400">
+                        <span className="text-blue-400">
                             All in One Place.
                         </span>
                     </h1>
