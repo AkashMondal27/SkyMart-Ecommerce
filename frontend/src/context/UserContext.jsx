@@ -187,6 +187,17 @@ export const UserProvider = ({ children, server }) => {
         }
 };
 
+     //==================== LogOut User========================
+
+    const logoutUser= async(navigation)=>{
+        Cookies.set("token",null)
+        setUser([])
+        setIsAuth(false)
+        toast.success("Logged out successfully");
+        navigate("/login")
+        
+    }
+
 useEffect(() => {
     fetchUser();
 }, [server]);
@@ -199,7 +210,8 @@ useEffect(() => {
                 btnLoading,
                 isAuth,
                 loginUser,
-                verifyUser
+                verifyUser,
+                logoutUser
 
             }}
         >

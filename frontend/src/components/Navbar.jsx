@@ -3,17 +3,20 @@ import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { ModeToggle } from './mode-toggle';
+import { UserData } from '@/context/UserContext';
 
 const Navbar = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
 
+    const{isAuth,logoutUser}=UserData();
+
     const logoutHandler = () => {
-        alert("Logged Out")
+        logoutUser(navigate);
     }
 
-    const isAuth = true;
+    
 
     return (
         // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>

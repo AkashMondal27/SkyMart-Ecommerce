@@ -54,7 +54,7 @@ const Products = () => {
         {/* ================= SIDEBAR ================= */}
         <aside
           className={`
-            fixed inset-y-0 left-0 z-50 md:z-40  w-72.5 bg-white dark:bg-slate-900
+            fixed inset-y-0 left-0 z-50 md:z-40  w-72.5 bg-green-50 dark:bg-slate-900
             border-r border-slate-200 dark:border-slate-800 shadow-2xl md:shadow-none
             transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
              ${show ? "translate-x-0" : "-translate-x-full"} `}>
