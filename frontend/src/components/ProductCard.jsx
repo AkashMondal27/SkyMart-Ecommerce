@@ -14,7 +14,7 @@ const ProductCard = ({ product, latest }) => {
                 bg-gray-100 dark:bg-gray-900 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ">
 
             {/* Product Image */}
-            <Link to={`/products/${product._id}`}>
+            
                 <div
                     className="
                         relative  h-55 bg-white dark:bg-gray-950 flex items-center justify-center overflow-hidden ">
@@ -33,7 +33,7 @@ const ProductCard = ({ product, latest }) => {
                         alt={product.title || "Product"}
                         className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-110" />
                 </div>
-            </Link>
+            
 
             {/* Product Information */}
             <div className="p-3.5">
