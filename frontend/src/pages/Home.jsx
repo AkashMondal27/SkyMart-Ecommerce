@@ -7,15 +7,15 @@ const Home = () => {
     const { loading, products, newProd } = ProductData();
 
     return (
-        <main className="w-full">
+        <main className="w-full mb-6 ">
             <Hero />
 
-            <div className="top products mt-4 px-4">
-                <h1 className="text-3xl mb-4">
+            <div className="top products mt-4  px-4">
+                <h1 className="text-3xl font-bold mb-4">
                     Latest Products
                 </h1>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4  sm:gap-5 ">
                     {newProd && newProd.length > 0 ? (
                         newProd.map((e) => (
                             <ProductCard
