@@ -5,14 +5,13 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-
-    // All products
+    // All Products
     const [products, setProducts] = useState([]);
 
-    // Loading state
+    // Loading
     const [loading, setLoading] = useState(true);
 
-    // Latest 4 products
+    // Latest Products
     const [newProd, setNewProd] = useState([]);
 
     // Pagination
@@ -27,81 +26,146 @@ export const ProductProvider = ({ children }) => {
     // Categories
     const [categories, setCategories] = useState([]);
 
+    // Single Product
+    const [product, setProduct] = useState(null);
+    const [relatedProduct, setRelatedProduct] = useState([]);
 
-    // Fetch products
+    // Error
+    const [error, setError] = useState(null);
+
+    /*=====================================================
+                 Fetch All Products
+     ===================================================== */
     const fetchProducts = async () => {
-
         setLoading(true);
+        setError(null);
 
         try {
-
             const { data } = await axios.get(
-                `${server}/api/v1/products/all?search=${search}&category=${category}&sortByPrice=${price}&page=${page}`
+                `${server}/api/v1/products/all`,
+                {
+                    params: {
+                        search,
+                        category,
+                        sortByPrice: price,
+                        page,
+                    },
+                }
             );
 
             console.log("PRODUCT API RESPONSE:", data);
 
+            // All products
+            setProducts(data?.products || []);
 
-            // Products
-            setProducts(data.products || []);
-
-
-            // Latest 4 products
-            setNewProd(data.newProducts || []);
-
+            // Latest products
+            setNewProd(data?.newProducts || []);
 
             // Categories
-            setCategories(data.categories || []);
+            setCategories(data?.categories || []);
 
-
-            // Total pages
-            setTotalPages(data.totalPages || 1);
-
+            // Pagination
+            setTotalPages(data?.totalPages || 1);
         } catch (error) {
-
-            console.log(
-                "PRODUCT ERROR:",
-                error.response?.data || error.message
+            console.error(
+                "PRODUCTS ERROR:",
+                error?.response?.data || error?.message
             );
 
+            setError(
+                error?.response?.data?.message ||
+                    "Unable to load products. Please try again."
+            );
+
+            setProducts([]);
         } finally {
-
             setLoading(false);
-
         }
     };
 
+    /* =====================================================
+             Fetch Single Product
+      =====================================================*/
 
-    // Fetch products whenever search, category, price or page changes
+    const fetchProduct = async (id) => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const { data } = await axios.get(
+                `${server}/api/v1/products/${id}`
+            );
+
+            console.log("SINGLE PRODUCT API RESPONSE:", data);
+
+            // Single product
+            setProduct(data?.product || null);
+
+            // Related products
+            setRelatedProduct(data?.relatedProducts || []);
+        } catch (error) {
+            console.error(
+                "SINGLE PRODUCT ERROR:",
+                error?.response?.data || error?.message
+            );
+
+            setError(
+                error?.response?.data?.message ||
+                    "Unable to load this product."
+            );
+
+            setProduct(null);
+            setRelatedProduct([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    /* =====================================================
+       Fetch Products When Filters / Page Change
+     =====================================================*/
     useEffect(() => {
-
         fetchProducts();
-
     }, [search, category, price, page]);
 
-
+    
+    
+    // Context Provider
     return (
         <ProductContext.Provider
             value={{
+                // Loading
                 loading,
+
+                // Error
+                error,
+
+                // Products
                 products,
                 newProd,
 
+                // Search
                 search,
                 setSearch,
 
+                // Categories
                 categories,
-
                 category,
                 setCategory,
 
+                // Price
                 price,
                 setPrice,
 
+                // Pagination
                 page,
                 setPage,
+                totalPages,
 
-                totalPages
+                // Single Product
+                fetchProduct,
+                product,
+                relatedProduct,
             }}
         >
             {children}
@@ -109,6 +173,7 @@ export const ProductProvider = ({ children }) => {
     );
 };
 
-
-// Custom hook
+// =====================================================
+// Custom Hook
+// =====================================================
 export const ProductData = () => useContext(ProductContext);
