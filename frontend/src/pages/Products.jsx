@@ -53,12 +53,14 @@ const Products = () => {
 
         {/* ================= SIDEBAR ================= */}
         <aside
-          className={`
+          className={` 
             fixed inset-y-0 left-0 z-50 md:z-40  w-72.5 bg-green-50 dark:bg-slate-900
             border-r border-slate-200 dark:border-slate-800 shadow-2xl md:shadow-none
-            transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
-             ${show ? "translate-x-0" : "-translate-x-full"} `}>
-
+            transform transition-transform duration-300 ease-in-out
+            ${show ? "translate-x-0" : "-translate-x-full"} 
+            md:sticky md:top-0  md:h-screen md:self-start
+            md:translate-x-0   md:z-20  md:shadow-none `}>
+    
 
           {/* Sidebar Header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-800">
@@ -196,7 +198,7 @@ const Products = () => {
 
           {/* Top Header */}
           <div
-            className=" sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800
+            className=" sticky  md:static top-0 z-30 border-b border-slate-200 dark:border-slate-800
                         bg-white/90 dark:bg-slate-950/90 backdrop-blur-md ">
 
             <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
@@ -206,7 +208,7 @@ const Products = () => {
                   All Products
                 </h1>
 
-                <p className="hidden sm:block text-sm text-slate-500 dark:text-slate-400 mt-1">
+                <p className="block text-sm text-slate-500 dark:text-slate-400 mt-1">
                   Discover products you'll love
                 </p>
               </div>
