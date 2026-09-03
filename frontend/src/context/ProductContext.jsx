@@ -28,7 +28,7 @@ export const ProductProvider = ({ children }) => {
 
     // Single Product
     const [product, setProduct] = useState(null);
-    const [relatedProduct, setRelatedProduct] = useState([]);
+    const [relatedProducts, setrelatedProducts] = useState([]);
 
     // Error
     const [error, setError] = useState(null);
@@ -74,7 +74,7 @@ export const ProductProvider = ({ children }) => {
 
             setError(
                 error?.response?.data?.message ||
-                    "Unable to load products. Please try again."
+                "Unable to load products. Please try again."
             );
 
             setProducts([]);
@@ -102,7 +102,7 @@ export const ProductProvider = ({ children }) => {
             setProduct(data?.product || null);
 
             // Related products
-            setRelatedProduct(data?.relatedProducts || []);
+            setrelatedProducts(data?.relatedProducts || []);
         } catch (error) {
             console.error(
                 "SINGLE PRODUCT ERROR:",
@@ -111,11 +111,11 @@ export const ProductProvider = ({ children }) => {
 
             setError(
                 error?.response?.data?.message ||
-                    "Unable to load this product."
+                "Unable to load this product."
             );
 
             setProduct(null);
-            setRelatedProduct([]);
+            setrelatedProducts([]);
         } finally {
             setLoading(false);
         }
@@ -128,8 +128,8 @@ export const ProductProvider = ({ children }) => {
         fetchProducts();
     }, [search, category, price, page]);
 
-    
-    
+
+
     // Context Provider
     return (
         <ProductContext.Provider
@@ -165,7 +165,7 @@ export const ProductProvider = ({ children }) => {
                 // Single Product
                 fetchProduct,
                 product,
-                relatedProduct,
+                relatedProducts,
             }}
         >
             {children}

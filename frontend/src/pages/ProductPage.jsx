@@ -9,6 +9,7 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ProductData } from "@/context/ProductContext";
+
 import { UserData } from "@/context/UserContext";
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -19,6 +20,7 @@ import {
     XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ProductCard from "@/components/ProductCard";
 
 const ProductPage = () => {
     const { id } = useParams();
@@ -27,6 +29,7 @@ const ProductPage = () => {
     const {
         loading,
         product,
+        relatedProducts,
         fetchProduct,
     } = ProductData();
 
@@ -62,11 +65,12 @@ const ProductPage = () => {
         );
     }
 
+    // outof Stock logic
     const isOutOfStock = product.stock <= 0;
 
     return (
-        <main className="container px-4 py-6 md:py-8">
-            <div className="mx-auto max-w-4xl">
+        <main className="container px-6 py-6 md:py-8">
+            <div className="mx-auto max-w-6xl">
 
                 {/* Back Button */}
                 <Link
@@ -81,13 +85,13 @@ const ProductPage = () => {
                 <div className="grid grid-cols-1 gap-7 md:grid-cols-[360px_1fr] md:gap-10">
 
                     {/* ================= IMAGE ================= */}
-                    <div className="w-full">
+                    <div className="w-full px-1">
                         <div className="overflow-hidden rounded-xl bg-transparent">
                             <Carousel className="w-full">
                                 <CarouselContent>
                                     {product.images?.map((image, index) => (
                                         <CarouselItem key={index}>
-                                            <div className="flex h-[280px] sm:h-[300px] w-full items-center justify-center bg-transparent">
+                                            <div className="flex h-70 sm:h-75 w-full items-center justify-center bg-transparent">
                                                 <img
                                                     src={image.url}
                                                     alt={`${product.title} image ${index + 1}`}
@@ -124,7 +128,7 @@ const ProductPage = () => {
 
                         {/* Description */}
                         <p className="mt-3 max-w-xl text-sm leading-6 text-foreground/80">
-                            { product.description}
+                            {product.description}
                         </p>
 
                         {/* Price */}
@@ -148,7 +152,7 @@ const ProductPage = () => {
                                     <CheckCircle2 className="h-4 w-4" />
                                     Available
                                     <span className="font-normal text-foreground/75">
-                                        ({product.stock} in stock)
+                                         ( {product.stock} in stock )
                                     </span>
                                 </div>
                             )}
@@ -159,7 +163,7 @@ const ProductPage = () => {
                             {isAuth ? (
                                 <Button className={" bg-green-700 hover:bg-orange-600 "}
                                     disabled={isOutOfStock}
-                                    
+
                                 >
                                     <ShoppingCart className="h-4 w-4" />
                                     {isOutOfStock
@@ -183,9 +187,48 @@ const ProductPage = () => {
                 </div>
 
 
-                {/* =========Show the related product  */}
+              
+                {/* ================= RELATED PRODUCTS ================= */}
+                {relatedProducts?.length > 0 && (
+                    <section className="mt-16 border-t pt-12">
 
-                
+                        {/* Section Header */}
+                        <div className="mb-8 flex items-end justify-between">
+
+                            <div>
+                                <div className="flex items-center gap-3">
+                                    <h2 className="text-2xl font-bold tracking-tight">
+                                        Related Products
+                                    </h2>
+
+                                    <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                                        {relatedProducts.length}
+                                    </span>
+                                </div>
+
+                                <p className="mt-2 text-sm text-muted-foreground">
+                                    Similar products you may be interested in
+                                </p>
+                            </div>
+
+                            
+                        </div>
+
+                        <div className="grid  gap-5  grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  ">
+                                   
+                            {relatedProducts.map((item) => (
+                                <ProductCard
+                                    key={item._id}
+                                    product={item}
+                                />
+                            ))}
+                        </div>
+
+                       
+
+                    </section>
+                )}
+
             </div>
         </main>
     );

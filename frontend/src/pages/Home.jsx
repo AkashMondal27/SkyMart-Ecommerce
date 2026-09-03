@@ -17,7 +17,7 @@ const Home = () => {
                 </h1>
                 
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div className=" md:px-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
 
                     {newProd && newProd.length > 0 ? (
                         newProd.map((e) => (
