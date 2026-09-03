@@ -11,10 +11,11 @@ import {
 import { ProductData } from "@/context/ProductContext";
 
 import { UserData } from "@/context/UserContext";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
     ArrowLeft,
+    ArrowUp,
     CheckCircle2,
     ShoppingCart,
     XCircle,
@@ -39,10 +40,18 @@ const ProductPage = () => {
         }
     }, [id]);
 
+    // Up Arrow setup on related product 
+    const [showAllRelated, setShowAllRelated] = useState(false);
+
     // Loading
     if (loading) {
         return <Loading />;
     }
+
+
+
+
+
 
     // Product not found
     if (!product) {
@@ -69,8 +78,8 @@ const ProductPage = () => {
     const isOutOfStock = product.stock <= 0;
 
     return (
-        <main className="container px-6 py-6 md:py-8">
-            <div className="mx-auto max-w-6xl">
+        <main className="w-full px-4 py-6 sm:px-6 md:py-8 lg:px-8">
+            <div className="mx-auto w-full max-w-7xl">
 
                 {/* Back Button */}
                 <Link
@@ -152,7 +161,7 @@ const ProductPage = () => {
                                     <CheckCircle2 className="h-4 w-4" />
                                     Available
                                     <span className="font-normal text-foreground/75">
-                                         ( {product.stock} in stock )
+                                        ( {product.stock} in stock )
                                     </span>
                                 </div>
                             )}
@@ -187,14 +196,18 @@ const ProductPage = () => {
                 </div>
 
 
-              
+
+
+
                 {/* ================= RELATED PRODUCTS ================= */}
+
+
+
                 {relatedProducts?.length > 0 && (
-                    <section className="mt-16 border-t pt-12">
+                    <section className="mt-16 border-t border-gray-200 dark:border-blue-900/40 pt-12">
 
                         {/* Section Header */}
                         <div className="mb-8 flex items-end justify-between">
-
                             <div>
                                 <div className="flex items-center gap-3">
                                     <h2 className="text-2xl font-bold tracking-tight">
@@ -210,13 +223,14 @@ const ProductPage = () => {
                                     Similar products you may be interested in
                                 </p>
                             </div>
-
-                            
                         </div>
 
-                        <div className="grid  gap-5  grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  ">
-                                   
-                            {relatedProducts.map((item) => (
+                        {/* Product Grid */}
+                        <div className="grid grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
+                            {(showAllRelated
+                                ? relatedProducts
+                                : relatedProducts.slice(0, 4)
+                            ).map((item) => (
                                 <ProductCard
                                     key={item._id}
                                     product={item}
@@ -224,13 +238,52 @@ const ProductPage = () => {
                             ))}
                         </div>
 
-                       
+                        {/* View All Button */}
+                        {!showAllRelated && relatedProducts.length > 4 && (
+                            <div className="mt-10 flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAllRelated(true)}
+                                    className="rounded-lg border bg-accent px-7 py-3 text-sm font-semibold 
+                                               shadow-sm transition-all hover:bg-gray-300
+                                              dark:hover:bg-blue-950 hover:shadow-md cursor-pointer"
+                                >
+                                    View All Related Products
+                                </button>
+                            </div>
+                        )}
 
                     </section>
                 )}
 
+                {/* Back to Top Button */}
+                {showAllRelated && relatedProducts.length > 4 && (
+                    <button
+                        type="button"
+                        onClick={() =>
+                            window.scrollTo({
+                                top: 0,
+                                behavior: "smooth",
+                            })
+                        }
+                        aria-label="Back to top"
+                        title="Back to top"
+                        className="fixed bottom-24 right-6 z-50 flex h-11 w-11 items-center justify-center
+                                   rounded-full border border-border bg-background text-foreground
+                                   shadow-md  transition-all duration-200 hover:bg-accent hover:shadow-lg
+                                   hover:text-accent-foreground dark:border-blue-400/40 dark:bg-slate-800
+                                   dark:text-white dark:hover:bg-slate-700 dark:hover:border-blue-400/70
+                                    ">
+
+                        <ArrowUp className="h-5 w-5" />
+                    </button>
+                )}
+
             </div>
         </main>
+
+
+
     );
 };
 
