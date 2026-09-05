@@ -39,7 +39,8 @@ export const addToCart = asyncHandler(async (req, res) => {
     let cart = await Cart.findOne({
         product: product,
         user: req.user._id
-    }).populate("product");
+    }) 
+    // .populate("product");
 
     // Increase quantity if product is already in cart
     if (cart) {
@@ -66,12 +67,25 @@ export const addToCart = asyncHandler(async (req, res) => {
         );
     }
 
-    // Create a new cart item
+    // // Create a new cart item
+    // cart = await Cart.create({
+    //     quantity: 1,
+    //     product: product,
+    //     user: req.user._id
+    // });
+    //     // Create new cart item
     cart = await Cart.create({
-        quantity: 1,
-        product: product,
-        user: req.user._id
+        user: req.user._id,
+        name: req.user.name,
+
+        product: cartProd._id,
+        productName: cartProd.title,
+
+        price: cartProd.price,
+
+        quantity: 1
     });
+
 
     // Send success response
     return res.status(201).json(
@@ -190,7 +204,9 @@ export const fetchCart = asyncHandler(async (req, res) => {
     // Get user's cart and populate product details
     const cart = await Cart.find({
         user: req.user._id
-    }).populate("product");
+    })
+    .populate("product")
+    // .populate("user", "name email");;
 
     // Calculate total quantity of all products
     const sumOfQuantities = cart.reduce(

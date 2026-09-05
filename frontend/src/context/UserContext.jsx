@@ -176,7 +176,8 @@ export const UserProvider = ({ children, server }) => {
          console.log("USER DATA:", data);
 
          setIsAuth(true);
-         setUser(data.user);
+        //  setUser(data.user);
+        setUser(data.data); // ✅ FIX
          setLoading(false);
         } catch (error) {
           console.log("ME ERROR:", error.response?.data);

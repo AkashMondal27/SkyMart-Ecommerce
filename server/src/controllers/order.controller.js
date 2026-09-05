@@ -37,6 +37,14 @@ export const newOrderCod = asyncHandler(async (req, res) => {
 
     let subTotal = 0;
 
+    // Check whether requested quantity is available
+    for (const item of cart) {
+        if (item.quantity > item.product.stock) {
+            return res.status(400).json({
+                message: `${item.product.title} is out of stock`
+            });
+        }
+    }
 
     // Convert cart items into the format required by the Order model
     const items = cart.map((i) => {
@@ -87,6 +95,7 @@ export const newOrderCod = asyncHandler(async (req, res) => {
         }
     }
 
+    
 
     // Remove all cart items belonging to the user
     // The cart is cleared only after the order has been created

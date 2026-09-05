@@ -5,32 +5,17 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-    // All Products
     const [products, setProducts] = useState([]);
-
-    // Loading
     const [loading, setLoading] = useState(true);
-
-    // Latest Products
     const [newProd, setNewProd] = useState([]);
-
-    // Pagination
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-
-    // Filters
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("");
     const [price, setPrice] = useState("");
-
-    // Categories
     const [categories, setCategories] = useState([]);
-
-    // Single Product
     const [product, setProduct] = useState(null);
     const [relatedProducts, setrelatedProducts] = useState([]);
-
-    // Error
     const [error, setError] = useState(null);
 
     /*=====================================================
@@ -55,17 +40,11 @@ export const ProductProvider = ({ children }) => {
 
             console.log("PRODUCT API RESPONSE:", data);
 
-            // All products
             setProducts(data?.products || []);
-
-            // Latest products
             setNewProd(data?.newProducts || []);
-
-            // Categories
             setCategories(data?.categories || []);
-
-            // Pagination
             setTotalPages(data?.totalPages || 1);
+
         } catch (error) {
             console.error(
                 "PRODUCTS ERROR:",
@@ -98,11 +77,9 @@ export const ProductProvider = ({ children }) => {
 
             console.log("SINGLE PRODUCT API RESPONSE:", data);
 
-            // Single product
             setProduct(data?.product || null);
-
-            // Related products
             setrelatedProducts(data?.relatedProducts || []);
+
         } catch (error) {
             console.error(
                 "SINGLE PRODUCT ERROR:",
@@ -134,35 +111,20 @@ export const ProductProvider = ({ children }) => {
     return (
         <ProductContext.Provider
             value={{
-                // Loading
                 loading,
-
-                // Error
                 error,
-
-                // Products
                 products,
                 newProd,
-
-                // Search
                 search,
                 setSearch,
-
-                // Categories
                 categories,
                 category,
                 setCategory,
-
-                // Price
                 price,
                 setPrice,
-
-                // Pagination
                 page,
                 setPage,
                 totalPages,
-
-                // Single Product
                 fetchProduct,
                 product,
                 relatedProducts,
@@ -173,7 +135,7 @@ export const ProductProvider = ({ children }) => {
     );
 };
 
-// =====================================================
-// Custom Hook
-// =====================================================
+/*=====================================================
+         Custom Hook
+===================================================== */
 export const ProductData = () => useContext(ProductContext);

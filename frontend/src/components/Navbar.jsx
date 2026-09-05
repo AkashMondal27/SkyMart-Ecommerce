@@ -4,13 +4,19 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
 import { ModeToggle } from './mode-toggle';
 import { UserData } from '@/context/UserContext';
+import { CartData } from '@/context/CartContext';
+
 
 const Navbar = () => {
 
+    const { user } = UserData();
     const navigate = useNavigate();
     const location = useLocation();
 
     const{isAuth,logoutUser}=UserData();
+
+    //for the cart update
+    const {totalItem} =CartData();
 
     const logoutHandler = () => {
         logoutUser(navigate);
@@ -19,22 +25,11 @@ const Navbar = () => {
     
 
     return (
-        // <div className='z-50 sticky top-0 bg-zinc-200/50  w-full border-b  dark:bg-[#080d18]/95 dark:border-blue-900/40   dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] '>
-        <div
-            className="
-        sticky rounded-full
-        top-0
-        z-50
-        w-full
-        border-b
-        border-zinc-200
-        bg-zinc-50
-        shadow-sm
-        dark:border-blue-900/40
-        dark:bg-[#080d18]
-        dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)]
-    "
-        >
+        
+        <div className="sticky rounded-full top-0 z-50  w-full border-b border-zinc-200
+                        bg-zinc-50  shadow-sm dark:border-blue-900/40 dark:bg-[#080d18]
+                         dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] ">
+
             <div className="container mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/*  SkyCart Logo */}
@@ -107,10 +102,12 @@ const Navbar = () => {
                                 className="w-5 h-5"
                                 strokeWidth={location.pathname === "/cart" ? 3 : 2}
                             />
-
+                            
+                            {totalItem  > 0 && 
                             <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
-                                5
-                            </span>
+                                {totalItem}
+                            </span>}
+                            
                         </div>
                     </li>
 
@@ -127,7 +124,9 @@ const Navbar = () => {
                                 <DropdownMenuGroup>
 
                                     <DropdownMenuLabel>
-                                        Account
+                                        <span className="max-w-30 truncate text-sm font-semibold text-orange-700 dark:text-orange-400">
+                                            {user?.name || "Account"}
+                                        </span>
                                     </DropdownMenuLabel>
 
                                     <DropdownMenuSeparator />

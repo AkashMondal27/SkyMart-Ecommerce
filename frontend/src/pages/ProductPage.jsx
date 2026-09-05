@@ -22,10 +22,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/ProductCard";
+import { CartData } from "@/context/CartContext";
+import toast from "react-hot-toast";
+
 
 const ProductPage = () => {
     const { id } = useParams();
     const { isAuth } = UserData();
+    const { cart, addToCart } = CartData();
 
     const {
         loading,
@@ -49,10 +53,6 @@ const ProductPage = () => {
     }
 
 
-
-
-
-
     // Product not found
     if (!product) {
         return (
@@ -74,8 +74,30 @@ const ProductPage = () => {
         );
     }
 
-    // outof Stock logic
-    const isOutOfStock = product.stock <= 0;
+    // Find this product in the current user's cart
+    const cartItem = cart?.find(
+        (item) => item.product?._id === product._id
+    );
+
+    // How many of this product the current user already has
+    const cartQuantity = cartItem?.quantity || 0;
+
+    // How many this user can still add
+    const remainingStock = product.stock - cartQuantity;
+
+    // Control frontend availability
+    const isOutOfStock = remainingStock <= 0;
+
+    //add to card logic
+    const addToCartHandler = () => {
+        if (remainingStock <= 0) {
+            toast.error("You have reached the available quantity");
+                return;
+        }
+
+        addToCart(id);
+    };
+
 
     return (
         <main className="w-full px-4 py-6 sm:px-6 md:py-8 lg:px-8">
@@ -160,9 +182,7 @@ const ProductPage = () => {
                                                 text-green-600 dark:text-green-400">
                                     <CheckCircle2 className="h-4 w-4" />
                                     Available
-                                    <span className="font-normal text-foreground/75">
-                                        ( {product.stock} in stock )
-                                    </span>
+
                                 </div>
                             )}
                         </div>
@@ -172,6 +192,8 @@ const ProductPage = () => {
                             {isAuth ? (
                                 <Button className={" bg-green-700 hover:bg-orange-600 "}
                                     disabled={isOutOfStock}
+                                    onClick={addToCartHandler}
+
 
                                 >
                                     <ShoppingCart className="h-4 w-4" />
