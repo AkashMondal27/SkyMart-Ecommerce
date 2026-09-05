@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { CartData } from '@/context/CartContext'
 import { UserData } from '@/context/UserContext'
 import { Loader, ArrowLeft } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -15,11 +16,13 @@ const Verify = () => {
     const navigate = useNavigate();
     const { btnLoading, loginUser, verifyUser, } = UserData();
 
+    const{fetchCart}=CartData();
+
     // Verify the entered OTP and complete the login process.
     const submitHandler = () => {
         const name = localStorage.getItem("name");
         const email = localStorage.getItem("email");
-        verifyUser(name, email, otp, navigate);
+        verifyUser(name, email, otp, navigate,fetchCart);
     };
 
     // Start a 90-second countdown before allowing the user to resend OTP.

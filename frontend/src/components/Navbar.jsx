@@ -16,10 +16,10 @@ const Navbar = () => {
     const{isAuth,logoutUser}=UserData();
 
     //for the cart update
-    const {totalItem} =CartData();
+    const {totalItem , fetchCart} =CartData();
 
     const logoutHandler = () => {
-        logoutUser(navigate);
+        logoutUser(navigate, fetchCart);
     }
 
     

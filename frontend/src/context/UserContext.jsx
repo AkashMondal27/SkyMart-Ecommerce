@@ -95,7 +95,7 @@ export const UserProvider = ({ children, server }) => {
 
     //=================== Verify User ==========================
 
-    const verifyUser = async (name,email, otp, navigate) => {
+    const verifyUser = async (name,email, otp, navigate,fetchCart) => {
 
         // 1. Validate OTP in frontend
         const validation = validateOtp(otp);
@@ -129,6 +129,7 @@ export const UserProvider = ({ children, server }) => {
             // 4. Save authentication state
             setIsAuth(true);
             setUser(data.data?.user);
+           
 
             // 5. Store JWT
             Cookies.set("token", data.data?.token, {
@@ -138,7 +139,10 @@ export const UserProvider = ({ children, server }) => {
                 path: "/",
             });
 
-            // 6. Go to home page
+            // 6. Fetch user's cart
+             await fetchCart();
+
+            // 7. Go to home page
             navigate("/");
 
         } catch (error) {
@@ -189,15 +193,19 @@ export const UserProvider = ({ children, server }) => {
 };
 
      //==================== LogOut User========================
+    const logoutUser = async (navigate, fetchCart) => {
+        Cookies.remove("token");
 
-    const logoutUser= async(navigation)=>{
-        Cookies.set("token",null)
-        setUser([])
-        setIsAuth(false)
+        setUser(null);
+        setIsAuth(false);
+
         toast.success("Logged out successfully");
-        navigate("/login")
-        
-    }
+
+        fetchCart();
+
+        navigate("/login");
+    };
+   
 
 useEffect(() => {
     fetchUser();

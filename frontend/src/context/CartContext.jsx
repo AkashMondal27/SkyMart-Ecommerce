@@ -10,37 +10,22 @@ import toast from "react-hot-toast";
 
 import { server } from "@/main";
 
-// ============================================================
-// Cart Context
-// ============================================================
-
 const CartContext = createContext(null);
 
-// ============================================================
-// Cart Provider
-// ============================================================
+
 
 export const CartProvider = ({ children }) => {
-    // --------------------------------------------------------
-    // Authentication
-    // --------------------------------------------------------
-
-    const token = Cookies.get("token");
-
-    // --------------------------------------------------------
-    // Cart State
-    // --------------------------------------------------------
-
+    
     const [cart, setCart] = useState([]);
     const [totalItem, setTotalItem] = useState(0);
     const [subTotal, setSubTotal] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    // ========================================================
-    // Fetch Cart
-    // ========================================================
-
     const fetchCart = async () => {
+
+        // Get the latest token every time
+       const token = Cookies.get("token");
+
         // User is not logged in
         if (!token) {
             setCart([]);
@@ -78,9 +63,9 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // ========================================================
-    // Add Product To Cart
-    // ========================================================
+    
+    /* Add Product To Cart
+    =======================================================*/
 
     const addToCart = async (productId) => {
         // Require authentication
@@ -127,17 +112,12 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // ========================================================
+    
     // Fetch Cart On Authentication
-    // ========================================================
-
     useEffect(() => {
         fetchCart();
-    }, [token]);
+    }, []);
 
-    // ========================================================
-    // Context Value
-    // ========================================================
 
     const cartValue = {
         cart,
@@ -154,10 +134,6 @@ export const CartProvider = ({ children }) => {
         </CartContext.Provider>
     );
 };
-
-// ============================================================
-// Cart Hook
-// ============================================================
 
 export const CartData = () => {
     return useContext(CartContext);
