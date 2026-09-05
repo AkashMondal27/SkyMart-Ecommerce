@@ -113,10 +113,12 @@ const ProductPage = () => {
                 </Link>
 
                 {/* Product */}
-                <div className="grid grid-cols-1 gap-7 md:grid-cols-[360px_1fr] md:gap-10">
+                {/* <div className="grid grid-cols-1 gap-7 md:grid-cols-[360px_1fr] md:gap-10"> */}
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-[420px_1fr] md:gap-16 lg:grid-cols-[460px_1fr] lg:gap-20">
+
 
                     {/* ================= IMAGE ================= */}
-                    <div className="w-full px-1">
+                    <div className="w-full ">
                         <div className="overflow-hidden rounded-xl bg-transparent">
                             <Carousel className="w-full">
                                 <CarouselContent>
