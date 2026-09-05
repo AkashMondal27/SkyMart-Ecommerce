@@ -132,7 +132,7 @@ export const CartProvider = ({ children }) => {
 
         try {
             setLoading(true);
-            const { data } = await axios.post(`${server}/api/v1/cart/update?=${action}`,
+            const { data } = await axios.post(`${server}/api/v1/cart/update?action=${action}`,
                 { id },
                 {
                     headers: {
@@ -181,7 +181,7 @@ export const CartProvider = ({ children }) => {
     try {
         setLoading(true);
 
-        const { data } = await axios.delete(
+        const { data } = await axios.get(
             `${server}/api/v1/cart/remove/${id}`,
             {
                 headers: {
@@ -225,6 +225,7 @@ export const CartProvider = ({ children }) => {
         loading,
         fetchCart,
         addToCart,
+        setTotalItem,
         updateCart,
         removeFromCart,
     };
