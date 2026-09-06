@@ -41,9 +41,9 @@ const Cart = () => {
                             <div
                                 key={e._id}
                                 className="grid grid-cols-[64px_minmax(0,1fr)] gap-x-3 gap-y-3
-                                           rounded-xl border border-border/60 bg-card p-3 shadow-sm
-                                            transition-all duration-200 hover:border-border  
-                                            hover:shadow-md dark:bg-card/80 dark:shadow-black/20
+                                           rounded-xl border border-border/60 bg-orange-50 p-3 shadow-sm
+                                            transition-all duration-500 hover:border-border  
+                                            hover:shadow-lg dark:bg-card dark:shadow-white/10
                                             sm:grid-cols-[80px_minmax(0,1fr)_auto_auto] sm:items-center
                                             sm:gap-4 sm:p-4 ">
 
@@ -136,8 +136,8 @@ const Cart = () => {
                     {/* ================= ORDER SUMMARY ================= */}
                     <div className="min-w-0 lg:sticky lg:top-24">
 
-                        <div className="rounded-xl border border-border/60 bg-card p-5 
-                                        shadow-sm dark:bg-card/90  dark:shadow-black/20
+                        <div className="rounded-xl border border-border/60 bg-green-100 p-5 
+                                        shadow-sm dark:bg-card  dark:shadow-white/20
                                          sm:p-6">
 
                             <h2 className="text-xl font-semibold tracking-tight text-foreground">
