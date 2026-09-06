@@ -20,6 +20,11 @@ const addressSchema = new mongoose.Schema(
                 required: true,
                 trim: true,
             },
+            city: {
+                type: String,
+                required: true,
+                trim: true,
+            },
 
             post: {
                 type: String,
@@ -35,13 +40,11 @@ const addressSchema = new mongoose.Schema(
 
             district: {
                 type: String,
-                required: true,
                 trim: true,
             },
 
             state: {
                 type: String,
-                required: true,
                 trim: true,
             },
         },
