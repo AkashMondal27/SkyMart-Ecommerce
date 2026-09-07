@@ -16,7 +16,7 @@ const stripe = new Stripe(process.env.Stripe_Secret_key);
    ============================================================ */
 
 export const newOrderCod = asyncHandler(async (req, res) => {
-    const { phone, address } = req.body;
+    const { name, phone, address } = req.body;
 
     // Validate checkout information
     if (!phone || !address) {
@@ -82,6 +82,7 @@ export const newOrderCod = asyncHandler(async (req, res) => {
         items,
         method: "COD",
         user: req.user._id,
+        name,
         phone,
         address,
         subTotal,

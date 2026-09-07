@@ -7,6 +7,7 @@ import { server } from "@/main";
 import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import { LocateIcon, Phone } from "lucide-react";
 
 const Payment = () => {
   const {
@@ -71,8 +72,17 @@ const Payment = () => {
         `${server}/api/v1/order/new/cod`,
         {
           method: "COD",
+          name: address.name,
           phone: address.phone,
-          address: address.location,
+          address: {
+            location: address.location,
+            city: address.city,
+            post: address.post,
+            pinCode: address.pinCode,
+            district: address.district,
+            state: address.state,
+            country: address.country,
+          }
         },
         {
           headers: {
@@ -221,16 +231,35 @@ const Payment = () => {
 
             {address ? (
               <div className="space-y-1 text-sm">
-                <p className="font-semibold">
+                {/* Name */}
+                <p className="text-lg font-semibold">
                   {address.name}
                 </p>
 
+                {/* Phone */}
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span>{address.phone}</span>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-start gap-2">
+                  <LocateIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                  <p>{address.location}</p>
+                </div>
+
+                {/* City, Post, District, State, Country */}
                 <p>
-                  {address.phone}
+                  {address.city}
+                  {address.post && `, ${address.post}`}
+                  {address.district && `, ${address.district}`}
+                  {address.state && `, ${address.state}`}
+                  {address.country && `, ${address.country}`}
                 </p>
 
-                <p className="text-muted-foreground">
-                  {address.location}
+                {/* PIN */}
+                <p className="font-medium">
+                  PIN: {address.pinCode}
                 </p>
               </div>
             ) : (

@@ -1,4 +1,4 @@
- import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
     {
@@ -45,6 +45,11 @@ const orderSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
 
         // Customer phone number
         phone: {
@@ -54,10 +59,44 @@ const orderSchema = new mongoose.Schema(
 
         // Shipping address saved with the order
         address: {
-            type: String,
-            required: true,
-        },
 
+            location: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+            city: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            post: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            pinCode: {
+                type: String,
+                required: true,
+                trim: true,
+            },
+
+            district: {
+                type: String,
+                trim: true,
+            },
+
+            state: {
+                type: String,
+                trim: true,
+            },
+            country: {
+                type: String,
+                trim: true,
+            },
+        },
         // Total product amount
         subTotal: {
             type: Number,
@@ -110,65 +149,65 @@ const orderSchema = new mongoose.Schema(
 );
 
 export const Order = mongoose.model("Order", orderSchema);
- 
- /*
- import mongoose from "mongoose";
+
+/*
+import mongoose from "mongoose";
 
 const orderSchema=new mongoose.Schema({
-    items:[{
-        quantity :{
-            type :Number,
-            required :true
-        },
-        product :{
-            type :mongoose.Schema.Types.ObjectId,
-            ref:"Product",
-            required :true
-        },
-        productName: {
-        type: String,
-        required: true
-    },
-     price: {
-        type: Number,
-        required: true
-    }
-    }],
-    method :{
-        type: String,
-        required:true,
-    },
-    paymentInfo:{
-        type:String,
-    },
-    user :{
-            type :mongoose.Schema.Types.ObjectId,
-            ref:"User",
-            required :true
-        },
-    phone:{
-        type:Number,
-        required: true
-    }  ,
-    address:{
-        type:String,
-        required : true
-    }  ,
-    status:{
-     type:String,
-     default :"Pending"
-    },
-    paidAt:{
-        type:String
-    },
-    subTotal:{
-        type:Number,
-        required:true
-    },
-    createdAt:{
-        type:Date,
-        default :Date.now
-    }
+   items:[{
+       quantity :{
+           type :Number,
+           required :true
+       },
+       product :{
+           type :mongoose.Schema.Types.ObjectId,
+           ref:"Product",
+           required :true
+       },
+       productName: {
+       type: String,
+       required: true
+   },
+    price: {
+       type: Number,
+       required: true
+   }
+   }],
+   method :{
+       type: String,
+       required:true,
+   },
+   paymentInfo:{
+       type:String,
+   },
+   user :{
+           type :mongoose.Schema.Types.ObjectId,
+           ref:"User",
+           required :true
+       },
+   phone:{
+       type:Number,
+       required: true
+   }  ,
+   address:{
+       type:String,
+       required : true
+   }  ,
+   status:{
+    type:String,
+    default :"Pending"
+   },
+   paidAt:{
+       type:String
+   },
+   subTotal:{
+       type:Number,
+       required:true
+   },
+   createdAt:{
+       type:Date,
+       default :Date.now
+   }
 
 } ,{timestamps:true})
 
