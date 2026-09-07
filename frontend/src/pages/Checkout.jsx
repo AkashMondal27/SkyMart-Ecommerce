@@ -3,7 +3,7 @@ import { server } from "@/main";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import Loading from "@/components/Loading";
@@ -45,7 +45,9 @@ const initialAddress = {
     country: "",
 };
 
+
 const Checkout = () => {
+    const navigate = useNavigate();
     const [addresses, setAddresses] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -63,7 +65,11 @@ const Checkout = () => {
             });
 
             const fetchedAddresses = data?.data || [];
-            setAddresses(fetchedAddresses);
+            const sortedAddresses = [...fetchedAddresses].sort(
+                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
+
+            setAddresses(sortedAddresses);
 
             const savedId = localStorage.getItem("selectedAddressId");
             const savedAddress = fetchedAddresses.find((item) => item._id === savedId);
@@ -71,8 +77,8 @@ const Checkout = () => {
             if (savedAddress) {
                 setSelectedAddress(savedAddress);
             } else if (fetchedAddresses.length) {
-                setSelectedAddress(fetchedAddresses[0]);
-                localStorage.setItem("selectedAddressId", fetchedAddresses[0]._id);
+                setSelectedAddress(sortedAddresses[0]);
+                localStorage.setItem("selectedAddressId",sortedAddresses[0]._id);
             } else {
                 setSelectedAddress(null);
                 localStorage.removeItem("selectedAddressId");
@@ -229,11 +235,10 @@ const Checkout = () => {
                                     <Card
                                         key={item._id}
                                         onClick={() => handleSelectAddress(item)}
-                                        className={`relative cursor-pointer transition ${
-                                            isSelected
+                                        className={`relative cursor-pointer transition ${isSelected
                                                 ? "border-primary ring-2 ring-primary/20"
                                                 : "hover:border-primary/50"
-                                        }`}
+                                            }`}
                                     >
                                         {isSelected && (
                                             <Badge className="absolute right-4 top-4 gap-1">
@@ -288,10 +293,10 @@ const Checkout = () => {
                                                 </Button>
 
                                                 {isSelected && (
-                                                    <Button asChild size="lg" className="flex-1">
-                                                        <Link to={`/payment/${selectedAddress._id}`}>
+                                                    <Button  size="lg" className="flex-1"
+                                                        onClick={() => navigate(`/payment/${selectedAddress._id}`)}>
                                                             Continue to Payment
-                                                        </Link>
+                                                        
                                                     </Button>
                                                 )}
 

@@ -11,7 +11,8 @@ const ProductCard = ({ product, latest }) => {
         <div
             className="
                 group w-full max-w-70 mx-auto overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800
-                bg-gray-100 dark:bg-gray-900 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ">
+                bg-gray-100 dark:bg-gray-900 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg 
+                  hover:shadow-gray-600  hover:dark:shadow-fuchsia-100/50">
 
             {/* Product Image */}
             

@@ -24,9 +24,10 @@ const Cart = () => {
         <div className="container mx-auto w-full px-4 py-8 sm:px-6">
 
             {/* Page Title */}
-            <h1 className="mb-8 text-center text-3xl font-bold tracking-tight">
+            <h1 className="mb-3 text-center text-3xl font-bold tracking-tight">
                 Your Cart
             </h1>
+            <div className='border border-gray-400/20 dark:border-blue-900/50 mb-6 ' />
 
             {/* Empty Cart */}
             {cart?.length === 0 ? (
@@ -41,11 +42,14 @@ const Cart = () => {
                             <div
                                 key={e._id}
                                 className="grid grid-cols-[64px_minmax(0,1fr)] gap-x-3 gap-y-3
-                                           rounded-xl border border-border/60 bg-orange-50 p-3 shadow-sm
-                                            transition-all duration-500 hover:border-border  
-                                            hover:shadow-lg dark:bg-card dark:shadow-white/10
+                                           rounded-xl border border-border/60 bg-orange-50 p-3 
+                                             hover:border-border  
+                                             dark:bg-card 
                                             sm:grid-cols-[80px_minmax(0,1fr)_auto_auto] sm:items-center
-                                            sm:gap-4 sm:p-4 ">
+                                            sm:gap-4 sm:p-4 shadow shadow-gray-300 
+                             dark:shadow-fuchsia-100/40 transition-all  duration-500
+                             hover:-translate-1 hover:shadow-lg  dark:hover:shadow-sm  hover:shadow-gray-500 
+                             hover:dark:shadow-fuchsia-100 cursor-pointer ">
 
                                 {/* ================= IMAGE ================= */}
                                 <div className="flex h-16 w-16 shrink-0 items-center justify-center sm:h-20 sm:w-20">
