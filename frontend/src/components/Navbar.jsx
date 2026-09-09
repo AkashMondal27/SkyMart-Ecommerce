@@ -1,4 +1,4 @@
-import { Home as HomeIcon, ShoppingBag, LogIn, ShoppingCart, User } from 'lucide-react';
+import { Home as HomeIcon, ShoppingBag, LogIn, LogOut, ShoppingCart, LayoutDashboard, User } from 'lucide-react';
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu';
@@ -7,25 +7,26 @@ import { UserData } from '@/context/UserContext';
 import { CartData } from '@/context/CartContext';
 
 
+
 const Navbar = () => {
 
     const { user } = UserData();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const{isAuth,logoutUser}=UserData();
+    const { isAuth, logoutUser } = UserData();
 
     //for the cart update
-    const {totalItem , fetchCart} =CartData();
+    const { totalItem, fetchCart } = CartData();
 
     const logoutHandler = () => {
         logoutUser(navigate, fetchCart);
     }
 
-    
+
 
     return (
-        
+
         <div className="sticky rounded-full top-0 z-50  w-full border-b border-zinc-200
                         bg-zinc-50  shadow-sm dark:border-blue-900/40 dark:bg-[#080d18]
                          dark:shadow-[0_4px_25px_rgba(37,99,235,0.18)] ">
@@ -33,7 +34,9 @@ const Navbar = () => {
             <div className="container mx-auto px-6 py-4 flex items-center justify-between">
 
                 {/*  SkyCart Logo */}
-                <h1 className=' text-2xl font-bold '> <span className='text-blue-400'>Sky</span><span className='text-orange-400'>Cart</span></h1>
+                <h1 onClick={() => navigate("/")} className=' text-2xl font-bold cursor-pointer'>
+                    <span className='text-blue-400'>Sky</span><span className='text-orange-400'>Cart</span>
+                </h1>
 
 
                 <ModeToggle /> {/*Use to make the theme dark and light mode  */}
@@ -86,7 +89,7 @@ const Navbar = () => {
                     </li>
 
 
-                    
+
 
                     <li
                         onClick={() => navigate("/cart")}
@@ -102,12 +105,12 @@ const Navbar = () => {
                                 className="w-5 h-5"
                                 strokeWidth={location.pathname === "/cart" ? 3 : 2}
                             />
-                            
-                            {totalItem  > 0 && 
-                            <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
-                                {totalItem}
-                            </span>}
-                            
+
+                            {totalItem > 0 &&
+                                <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
+                                    {totalItem}
+                                </span>}
+
                         </div>
                     </li>
 
@@ -132,18 +135,41 @@ const Navbar = () => {
                                     <DropdownMenuSeparator />
 
                                     {!isAuth ? (
-                                        <DropdownMenuItem className="cursor-pointer"
-                                            onClick={() => navigate("/login")}>
-                                            Login
+                                        <DropdownMenuItem
+                                            className="cursor-pointer gap-2"
+                                            onClick={() => navigate("/login")}
+                                        >
+                                            <LogIn className="h-4 w-4" />
+                                            <span>Login</span>
                                         </DropdownMenuItem>
                                     ) : (
                                         <>
-                                            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate("/order")}>
-                                                Your Order
+                                            {/* Admin only */}
+                                            {user?.role === "admin" && (
+                                                <DropdownMenuItem
+                                                    className="cursor-pointer gap-2"
+                                                    onClick={() => navigate("/admin/dashboard")}
+                                                >
+                                                    <LayoutDashboard className="h-4 w-4" />
+                                                    <span>Dashboard</span>
+                                                </DropdownMenuItem>
+                                            )}
+
+                                            {/* Available for all users */}
+                                            <DropdownMenuItem
+                                                className="cursor-pointer gap-2"
+                                                onClick={() => navigate("/order")}
+                                            >
+                                                <ShoppingBag className="h-4 w-4" />
+                                                <span>Your Orders</span>
                                             </DropdownMenuItem>
 
-                                            <DropdownMenuItem className="cursor-pointer" onClick={logoutHandler}>
-                                                Logout
+                                            <DropdownMenuItem
+                                                className="cursor-pointer gap-2"
+                                                onClick={logoutHandler}
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                                <span>Logout</span>
                                             </DropdownMenuItem>
                                         </>
                                     )}
