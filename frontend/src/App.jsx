@@ -17,7 +17,7 @@ import ProductPage from "./pages/ProductPage";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import OrderProcessing from "./pages/OrderProcessing";
-
+import Order from "./pages/Order"
 function App() {
 
   const { isAuth ,loading}=UserData();
@@ -37,6 +37,7 @@ function App() {
           <Route path="/checkout" element={isAuth?<Checkout/>:<Login/>} />
           <Route path="/payment/:id" element={isAuth?<Payment/>:<Login/>} />
           <Route path="/ordersuccess" element={isAuth?<OrderProcessing/>:<Login/>} />
+          <Route path="/order" element={isAuth?<Order/>:<Login/>} />
 
           <Route path="*" element={<NotFound/>} />
           <Route path="/login" element={isAuth ? <Home/> :<Login />} />
