@@ -8,6 +8,7 @@ import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import { LocateIcon, Phone } from "lucide-react";
+import {loadStripe} from '@stripe/stripe-js';
 
 const Payment = () => {
   const {
@@ -53,7 +54,7 @@ const Payment = () => {
     }
   }, [id]);
 
-  // COD Order
+  // COD Order-------------------------
   const paymentHandler = async () => {
     if (!address) {
       toast.error("Please select an address");
@@ -109,6 +110,76 @@ const Payment = () => {
       setLoading(false);
     }
   };
+
+  //Online paymeny 
+
+  const OnlinePaymentHandler= async()=>{
+if (!address) {
+      toast.error("Please select an address");
+      return;
+    }
+
+    if (!cart?.length) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    //Get Publisiable Api key from backend
+    const { data } = await axios.get(
+    `${server}/api/v1/config/stripe`
+  );
+      
+  
+    const stripePromise = await loadStripe(data.publishableKey);
+   console.log(stripePromise);
+
+    try {
+      setLoading(true);
+      const stripe=  stripePromise;
+
+      const{data}= await axios.post(`${server}/api/v1/order/new/online`,
+        {
+          method: "Online",
+          name: address.name,
+          phone: address.phone,
+          address: {
+            location: address.location,
+            city: address.city,
+            post: address.post,
+            pinCode: address.pinCode,
+            district: address.district,
+            state: address.state,
+            country: address.country,
+          }
+        },
+        {
+          headers: {
+            token: Cookies.get("token"),
+          },
+        }
+      );
+
+     if(data?.data?.url){
+      window.location.href=data.data.url;
+      
+     }else{
+      toast.error("Failed to create payment Session")
+     }
+      
+    } catch (error) {
+      
+    console.error("online order error:", error);
+
+
+      toast.error(
+        error?.response?.data?.message ||
+        "Failed to place order"
+      );
+    } finally {
+      setLoading(false);
+    }
+
+  }
 
   if (loading) {
     return <Loading />;
@@ -288,7 +359,7 @@ const Payment = () => {
             <Button
               onClick={() => {
                 if (method === "ONLINE") {
-                  navigate(`/stripe/${id}`);
+                  OnlinePaymentHandler();
                   return;
                 }
 

@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import ProductPage from "./pages/ProductPage";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
+import OrderProcessing from "./pages/OrderProcessing";
 
 function App() {
 
@@ -35,6 +36,8 @@ function App() {
           <Route path="/cart" element={isAuth?<Cart/>:<Login/>} />
           <Route path="/checkout" element={isAuth?<Checkout/>:<Login/>} />
           <Route path="/payment/:id" element={isAuth?<Payment/>:<Login/>} />
+          <Route path="/ordersuccess" element={isAuth?<OrderProcessing/>:<Login/>} />
+
           <Route path="*" element={<NotFound/>} />
           <Route path="/login" element={isAuth ? <Home/> :<Login />} />
           <Route path="/verify" element={isAuth ? <Home/> :<Verify />} />

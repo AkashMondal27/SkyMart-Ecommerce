@@ -37,7 +37,12 @@ app.get("/", (req, res) => {
     res.send("SkyCart API is running successfully 🚀");
 });
 
-
+//Stripe Api key send to frontend
+app.get("/api/v1/config/stripe", (req, res) => {
+    res.json({
+        publishableKey: process.env.Stripe_Publisable_key,
+    });
+});
 
 //  GLOBAL ERROR HANDLER
 app.use((err, req, res, next) => {

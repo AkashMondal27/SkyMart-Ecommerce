@@ -19,11 +19,11 @@ export const newOrderCod = asyncHandler(async (req, res) => {
     const { name, phone, address } = req.body;
 
     // Validate checkout information
-    if (!phone || !address) {
+    if (!name || !phone || !address) {
         throw new ApiError(
             400,
             null,
-            "Phone number and address are required"
+            "Name ,Phone number and address are required"
         );
     }
 
@@ -330,23 +330,17 @@ export const updateStatus = asyncHandler(async (req, res) => {
 });
 
 
-/* ============================================================
-   ONLINE PAYMENT : - Create Stripe Checkout Session  
-   ============================================================ */
-
 export const newOrderOnlinePayment = asyncHandler(async (req, res) => {
-    const { phone, address } = req.body;
+    const { name, phone, address } = req.body;
 
-    // Validate checkout information
-    if (!phone || !address) {
+    if (!name || !phone || !address) {
         throw new ApiError(
             400,
             null,
-            "Phone number and address are required"
+            "Name, phone number and address are required"
         );
     }
 
-    // Get user's cart with current product information
     const cart = await Cart.find({
         user: req.user._id,
     }).populate({
@@ -354,16 +348,15 @@ export const newOrderOnlinePayment = asyncHandler(async (req, res) => {
         select: "title price stock image",
     });
 
-    // Cart must not be empty
     if (!cart.length) {
         throw new ApiError(400, null, "Cart is empty");
     }
 
     let subTotal = 0;
-    const items = [];
+    
+    const items = []; 
 
-    // Validate products and stock
-    for (const cartItem of cart) {
+    const lineItems = cart.map((cartItem) => {
         if (!cartItem.product) {
             throw new ApiError(
                 400,
@@ -382,67 +375,44 @@ export const newOrderOnlinePayment = asyncHandler(async (req, res) => {
             );
         }
 
-        const itemSubtotal =
-            product.price * cartItem.quantity;
-
-        subTotal += itemSubtotal;
-
+        subTotal += product.price * cartItem.quantity;
         items.push({
-            product: product._id,
-            productName: product.title,
-            price: product.price,
+    product: product._id,
+    productName: product.title,
+    price: product.price,
+    quantity: cartItem.quantity,
+});
+
+        const productData = {
+            name: product.title,
+        };
+
+        // if (product.image?.[0]) {
+        //     productData.images = [product.image[0]];
+        // }
+
+        return {
+            price_data: {
+                currency: "inr",
+                product_data: productData,
+                unit_amount: Math.round(product.price * 100),
+            },
             quantity: cartItem.quantity,
-        });
-    }
-
-    /* ----------------------------------------------------------
-     Create a pending order BEFORE sending the user to Stripe.
-     This is important because we should not depend on the
-     cart after payment is completed.
-    ----------------------------------------------------------*/
-
-    const order = await Order.create({
-        items,
-        method: "Online",
-        user: req.user._id,
-        phone,
-        address,
-        subTotal,
-
-        paymentStatus: "Pending",
-        status: "Pending Payment",
+        };
     });
+    const order = await Order.create({
+    items,
+    method: "Online",
+    user: req.user._id,
+    name,
+    phone,
+    address,
+    subTotal,
+    paymentStatus: "Pending",
+    status: "Pending Payment",
+});
 
     try {
-        /* ------------------------------------------------------
-         Create Stripe line items
-         ------------------------------------------------------*/
-
-        const lineItems = cart.map((cartItem) => {
-            const product = cartItem.product;
-
-            const productData = {
-                name: product.title,
-            };
-
-            // Add product image only if it exists
-            if (product.image?.[0]) {
-                productData.images = [product.image[0]];
-            }
-
-            return {
-                price_data: {
-                    currency: "inr",
-                    product_data: productData,                   
-                    unit_amount: Math.round(product.price * 100), // INR uses paise. Example: ₹500 = 50000 paise.
-                },
-                quantity: cartItem.quantity,
-            };
-        });
-
-        /* ------------------------------------------------------
-         Create Stripe Checkout Session
-        -----------------------------------------------------*/
         const session = await stripe.checkout.sessions.create({
             mode: "payment",
 
@@ -451,38 +421,37 @@ export const newOrderOnlinePayment = asyncHandler(async (req, res) => {
             line_items: lineItems,
 
             success_url:
-                `${process.env.CLIENT_URL}` +
-                `/ordersuccess?session_id={CHECKOUT_SESSION_ID}`,
+                `${process.env.CLIENT_URL}/ordersuccess` +
+                `?session_id={CHECKOUT_SESSION_ID}`,
 
             cancel_url:
                 `${process.env.CLIENT_URL}/cart`,
 
-            // Only store IDs in Stripe metadata.
             metadata: {
-                orderId: order._id.toString(),
+                
                 userId: req.user._id.toString(),
+                userId: req.user._id.toString(),
+                 
+                name,
+                phone,
+                address: JSON.stringify(address),
+                subTotal: subTotal.toString(),
             },
         });
-
-        // Save Stripe session ID to our order
-        order.stripeSessionId = session.id;
-
-        await order.save();
+         order.stripeSessionId = session.id;
+         await order.save();
 
         return res.status(200).json(
             new ApiResponse(
                 200,
                 {
                     url: session.url,
-                    orderId: order._id,
+                    sessionId: session.id,
                 },
                 "Stripe checkout session created successfully"
             )
         );
     } catch (error) {
-        // Stripe session failed, so remove the pending order
-        await Order.findByIdAndDelete(order._id);
-
         console.error("Stripe checkout error:", error);
 
         throw new ApiError(
@@ -494,14 +463,9 @@ export const newOrderOnlinePayment = asyncHandler(async (req, res) => {
 });
 
 
-/* ============================================================
-   VERIFY ONLINE PAYMENT
-   ============================================================ */
-
 export const verifyPayment = asyncHandler(async (req, res) => {
     const { sessionId } = req.body;
 
-    // Validate Stripe session ID
     if (!sessionId) {
         throw new ApiError(
             400,
@@ -510,25 +474,10 @@ export const verifyPayment = asyncHandler(async (req, res) => {
         );
     }
 
-    // Retrieve the Stripe Checkout Session
-    const session =
-        await stripe.checkout.sessions.retrieve(sessionId);
+    // Get Stripe session
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    /* ----------------------------------------------------------
-      Make sure this Stripe session belongs to the logged-in user
-    ----------------------------------------------------------*/
-    if (
-        session.metadata?.userId !==
-        req.user._id.toString()
-    ) {
-        throw new ApiError(
-            403,
-            null,
-            "You are not authorized to verify this payment"
-        );
-    }
-
-
+    // Check payment
     if (session.payment_status !== "paid") {
         throw new ApiError(
             400,
@@ -537,19 +486,22 @@ export const verifyPayment = asyncHandler(async (req, res) => {
         );
     }
 
-    // Get order ID from Stripe metadata
-    const orderId = session.metadata?.orderId;
+    // Check user
+    const userId = session.metadata?.userId;
 
-    if (!orderId) {
+    if (!userId || userId !== req.user._id.toString()) {
         throw new ApiError(
-            400,
+            403,
             null,
-            "Order information is missing"
+            "You are not authorized to verify this payment"
         );
     }
 
-    // Find the pending order
-    const order = await Order.findById(orderId);
+    // Find existing order
+    const order = await Order.findOne({
+        stripeSessionId: session.id,
+        user: req.user._id,
+    });
 
     if (!order) {
         throw new ApiError(
@@ -559,16 +511,7 @@ export const verifyPayment = asyncHandler(async (req, res) => {
         );
     }
 
-    // Make sure the Stripe session belongs to this order
-    if (order.stripeSessionId !== session.id) {
-        throw new ApiError(
-            400,
-            null,
-            "Stripe session does not match the order"
-        );
-    }
-   
-    // Prevent duplicate verification. 
+    // Prevent duplicate verification
     if (order.paymentStatus === "Paid") {
         return res.status(200).json(
             new ApiResponse(
@@ -579,57 +522,24 @@ export const verifyPayment = asyncHandler(async (req, res) => {
         );
     }
 
-    // Get Stripe Payment Intent ID
-    const paymentIntentId =
+    // Mark existing order as paid
+    order.paymentStatus = "Paid";
+    order.status = "Pending";
+    order.paidAt = new Date();
+
+    order.stripePaymentIntentId =
         typeof session.payment_intent === "string"
             ? session.payment_intent
             : session.payment_intent?.id;
 
-
-            
-    // Update payment information
-    order.paymentStatus = "Paid";
-    order.status = "Pending";
-    order.paidAt = new Date();
-    order.stripePaymentIntentId = paymentIntentId;
-
     await order.save();
 
-    // Reduce stock using an atomic update.  
-    for (const item of order.items) {
-        const updatedProduct = await Product.findOneAndUpdate(
-            {
-                _id: item.product,
-                stock: { $gte: item.quantity },
-            },
-            {
-                $inc: {
-                    stock: -item.quantity,
-                    sold: item.quantity,
-                },
-            },
-            {
-                new: true,
-            }
-        );
-
-        // Product does not have enough stock anymore
-        if (!updatedProduct) {
-            throw new ApiError(
-                400,
-                null,
-                "A product in this order is no longer available"
-            );
-        }
-    }
-
-   
-    // Clear the cart.
+    // Clear cart only after successful payment
     await Cart.deleteMany({
         user: req.user._id,
     });
 
-    // Send confirmation email
+    // Confirmation email
     await sendOrderConfirmation({
         email: req.user.email,
         subject: "SkyCart - Order Confirmation",
@@ -638,418 +548,11 @@ export const verifyPayment = asyncHandler(async (req, res) => {
         totalAmount: order.subTotal,
     });
 
-    // Return completed order
     return res.status(200).json(
         new ApiResponse(
             200,
             order,
-            "Payment verified and order created successfully"
+            "Payment verified successfully"
         )
     );
 });
-
-
-
-
-
-
-
-
-
-
-// import { asyncHandler } from "../utils/asyncHandler.js";
-// import { Cart } from "../models/cart.model.js";
-// import { Order } from "../models/order.model.js";
-// import { Product } from "../models/product.model.js";
-// import { ApiResponse } from "../utils/ApiResponse.js";
-// import sendOrderConfirmation from "../utils/sendOrderConfirmation.js";
-// import { ApiError } from "../utils/ApiError.js";
-// import Stripe from "stripe";
-
-
-// /*=======================================================
-//             Cash On Delevary 
-// ========================================================*/
-// export const newOrderCod = asyncHandler(async (req, res) => {
-
-//     // Get order details from the request body
-//     const { method, phone, address } = req.body;
-
-
-//     // Fetch all cart items belonging to the logged-in user
-//     // Populate product details so we can access title, price, and _id
-//     const cart = await Cart.find({
-//         user: req.user._id
-//     }).populate({
-//         path: "product",
-//         select: "title price"
-//     });
-
-
-//     // Prevent order creation when the cart is empty
-//     if (!cart.length) {
-//         return res.status(400).json({
-//             message: "Cart is empty"
-//         });
-//     }
-
-
-//     let subTotal = 0;
-
-//     // Check whether requested quantity is available
-//     for (const item of cart) {
-//         if (item.quantity > item.product.stock) {
-//             return res.status(400).json({
-//                 message: `${item.product.title} is out of stock`
-//             });
-//         }
-//     }
-
-//     // Convert cart items into the format required by the Order model
-//     const items = cart.map((i) => {
-
-//         // Calculate the subtotal for the individual product
-//         const itemSubtotal = i.product.price * i.quantity;
-
-//         // Add the item's subtotal to the complete order subtotal
-//         subTotal += itemSubtotal;
-
-
-//         return {
-//             product: i.product._id,
-//             // name: i.product.title,
-//             productName: i.product.title,
-//             price: i.product.price,
-//             quantity: i.quantity
-//         };
-//     });
-
-
-//     // Create the order using the cart information
-//     /*    const order = await Order.create({
-//         items,
-//         method,
-//         user: req.user._id,
-//         phone,
-//         address,
-//         subTotal
-//     }); */
-//     const order = await Order.create({
-//     items,
-//     method: "COD",
-//     user: req.user._id,
-//     phone,
-//     address,
-//     subTotal,
-
-//     // COD order does not require online payment
-//     paymentStatus: "Pending",
-//     status: "Pending",
-// });
-
-
-//     // Update product stock and sold quantity after creating the order
-//     for (const item of order.items) {
-
-//         const product = await Product.findById(item.product);
-
-//         // Make sure the product still exists before updating inventory
-//         if (product) {
-
-//             // Decrease available stock according to ordered quantity
-//             product.stock -= item.quantity;
-
-//             // Increase the total number of products sold
-//             product.sold += item.quantity;
-
-//             await product.save();
-//         }
-//     }
-
-
-
-//     // Remove all cart items belonging to the user
-//     // The cart is cleared only after the order has been created
-//     await Cart.deleteMany({
-//         user: req.user._id
-//     });
-
-
-//     //Send condirmation mail to user
-//     await sendOrderConfirmation({
-//         email: req.user.email,
-//         subject: "SkyCart - Order Confirmation",
-//         orderId: order._id,
-//         products: items,
-//         totalAmount: subTotal
-//     });
-
-//     // Send the newly created order to the client
-//     return res.status(201).json(
-//         new ApiResponse(
-//             201,
-//             order,
-//             "Order created successfully"
-//         )
-//     );
-// });
-
-
-
-// /*=======================================================
-//            Get All Orders
-// ========================================================*/
-
-// //user poin of view , show the new order 1st 
-// export const getAllOrders = asyncHandler(async (req, res) => {
-//     const orders = await Order.find({ user: req.user._id })
-//     res.json({ orders: orders.reverse() })
-// })
-
-
-// //Admin point of view , show new order 1st 
-
-// export const getAllOrdersAdmin = asyncHandler(async (req, res) => {
-//     if (req.user.role !== "admin") {
-//         return res.status(403).json(
-//             new ApiError(
-//                 403,
-//                 null,
-//                 "Access denied.You are not a ADMIN !"
-//             )
-//         );
-//     }
-//     const order = await Order.find().populate("user").sort({ createAt: -1 });
-//     return res.status(200).json(
-//         new ApiResponse(
-//             200,
-//             order,
-//             "You can see thr Newest Orders now "
-//         )
-//     );
-// })
-
-
-// // Sngle Order Fetch 
-
-// export const getMyOder = asyncHandler(async (req, res) => {
-//     const order = await Order.findById(req.params.id).populate("items.product").populate("user");
-//     return res.status(200).json(
-//         new ApiResponse(
-//             200,
-//             order,
-//             "Single Order Fetch SuccessFully "
-//         )
-//     );
-// })
-
-
-// /*=======================================================
-//            Orders Update Status 
-// ========================================================*/
-
-// export const updateStatus = asyncHandler(async (req, res) => {
-
-//     // Only admin can update order status
-//     if (req.user.role !== "admin") {
-//         return res.status(403).json(
-//             new ApiError(
-//                 403,
-//                 null,
-//                 "Access denied. You are not an ADMIN!"
-//             )
-//         );
-//     }
-
-//     // Find order using order ID from URL
-//     const order = await Order.findById(req.params.id);
-
-//     // Check if order exists
-//     if (!order) {
-//         return res.status(404).json(
-//             new ApiError(
-//                 404,
-//                 null,
-//                 "Order not found"
-//             )
-//         );
-//     }
-
-//     // Get new status from request body
-//     const { status } = req.body;
-
-//     // Update status
-//     order.status = status;
-
-//     // Save updated order
-//     await order.save();
-
-//     // Send response
-//     return res.status(200).json(
-//         new ApiResponse(
-//             200,
-//             order,
-//             "Order status updated successfully"
-//         )
-//     );
-// });
-
-
-// /*=======================================================
-//             Online Payment Controller
-// ========================================================*/
-// const stripe = new Stripe(process.env.Stripe_Secret_key);
-
-// export const newOrderOnlinePayment = asyncHandler(async (req, res) => {
-//     try {
-//         const { method, phone, address } = req.body;
-
-//         const cart = await Cart.find({
-//             user: req.user._id
-//         }).populate("products");
-
-
-//         if (!cart.length) {
-//             return res.status(400).json({
-//                 message: "Cart is empty"
-//             });
-//         }
-
-//         const subTotal = cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
-
-//         const LineItems = cart.map((item) => ({
-//             price_data: {
-//                 currency: "inr",
-//                 product_data: {
-//                     name: item.product.title,
-//                     image: [item.product.image[0], url],
-//                 },
-
-//                 unit_amount: Math.round(item.product.price * 100),
-//             },
-//             quantity: item.quantity,
-//         }))
-
-
-//         const session = await stripe.checkout.sessions.create({
-//             payment_method_types: ["card"],
-//             line_items: LineItems,
-//             mode: "payment",
-//             success_url: `${process.env.CLIENT_URL}/ordersuccess?session_id={CHECKOUT_SESSION_ID}`,
-//             cancel_url: `${process.env.CLIENT_URL}/cart`,
-//             metadata: {
-//                 userId: req.user._id.toString(),
-//                 method,
-//                 phone,
-//                 address,
-//                 subTotal: subTotal.toString(),
-//             },
-//         });
-
-//         res.json({ url: session.url });
-//     } catch (error) {
-//         console.error("Error creating Stripe checkout session:", error);
-//         res.status(500).json({
-//             message: "Failed to create Stripe Payment session",
-//         });
-//     }
-// });
-
-// //Verify Payment and Create Order
-
-// export const verifyPayment = asyncHandler(async (req, res) => {
-//     const { sessionId } = req.body;
-
-//     try {
-//         const session = await stripe.checkout.sessions.retrieve(sessionId);
-//         const { userId, method, phone, address, subTotal } = session.metadata;
-
-//         const cart = await Cart.find({
-//             user: userId
-//         }).populate("product");
-
-//         const items = cart.map((i) => ({
-//             product: i.product._id,
-//             productName: i.product.title,
-//             price: i.product.price,
-//             quantity: i.quantity
-//         }));
-
-
-//         if (cart.length == 0) {
-//             return res.status(400).json({
-//                 message: "Cart is empty"
-//             });
-//         }
-
-//         const existingOrder = await Order.findOne({ paymentIntentId: sessionId });
-
-//         if (!existingOrder) {
-//             await Order.create({
-//                 items: cart.map((item) => ({
-//                     product: item.product._id,
-//                     productName: item.product.title,
-//                     price: item.product.price,
-//                     quantity: item.quantity
-//                 })),
-//                 method,
-//                 user: userId,
-//                 phone,
-//                 address,
-//                 subTotal,
-//                 paidAt: new Date(),
-//                 paymentIntentId: sessionId,
-//             });
-
-
-
-//             // Update product stock and sold quantity after creating the order
-//             for (const item of Order.items) {
-
-//                 const product = await Product.findById(item.product);
-
-//                 // Make sure the product still exists before updating inventory
-//                 if (product) {
-
-//                     // Decrease available stock according to ordered quantity
-//                     product.stock -= item.quantity;
-
-//                     // Increase the total number of products sold
-//                     product.sold += item.quantity;
-
-//                     await product.save();
-//                 }
-//             }
-
-//             // Remove all cart items belonging to the user
-//             // The cart is cleared only after the order has been created
-//             await Cart.deleteMany({
-//                 user: req.user._id
-//             });
-
-
-//             //Send condirmation mail to user
-//             await sendOrderConfirmation({
-//                 email: req.user.email,
-//                 subject: "SkyCart - Order Confirmation",
-//                 orderId: order._id,
-//                 products: items,
-//                 totalAmount: subTotal
-//             });
-
-//             return res.status(201).json(
-//                 new ApiResponse(
-//                     201,
-//                     order,
-//                     "Order created successfully"
-//                 )
-//             );
-//         }
-
-//     } catch (error) {
-//         console.log("Error Veryfing payment:", error);
-//         return res.status(500).json({
-//             message: "Error creating order"|| error.message
-//         });
-//     }
-// })

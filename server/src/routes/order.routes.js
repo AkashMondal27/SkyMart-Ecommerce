@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/new/cod", isAuth, newOrderCod);
 router.post("/new/online", isAuth, newOrderOnlinePayment);
 
-router.get("/verify/:sessionId", isAuth, verifyPayment);
+router.post("/verify/", isAuth, verifyPayment);
 
 router.get("/all", isAuth, getAllOrders);
 router.get("/admin/all", isAuth, getAllOrdersAdmin);
