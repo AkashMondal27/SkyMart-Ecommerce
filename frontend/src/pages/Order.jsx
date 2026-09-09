@@ -120,35 +120,35 @@ const Order = () => {
 
                     {/* {orders.map((order) => { */}
                     {orders.map((order, index) => {
-    const colors = [
-        {
-            button: "bg-blue-600 hover:bg-blue-700",
-            border: "hover:border-blue-500/40",
-            shadow: "hover:shadow-[0_8px_30px_rgba(37,99,235,0.18)]",
-        },
-        {
-            button: "bg-purple-600 hover:bg-purple-700",
-            border: "hover:border-purple-500/40",
-            shadow: "hover:shadow-[0_8px_30px_rgba(147,51,234,0.18)]",
-        },
-        {
-            button: "bg-emerald-600 hover:bg-emerald-700",
-            border: "hover:border-emerald-500/40",
-            shadow: "hover:shadow-[0_8px_30px_rgba(16,185,129,0.18)]",
-        },
-        {
-            button: "bg-orange-600 hover:bg-orange-700",
-            border: "hover:border-orange-500/40",
-            shadow: "hover:shadow-[0_8px_30px_rgba(234,88,12,0.18)]",
-        },
-        {
-            button: "bg-pink-600 hover:bg-pink-700",
-            border: "hover:border-pink-500/40",
-            shadow: "hover:shadow-[0_8px_30px_rgba(219,39,119,0.18)]",
-        },
-    ];
+                        const colors = [
+                            {
+                                button: "bg-blue-600 hover:bg-blue-700",
+                                border: "hover:border-blue-500/40",
+                                shadow: "hover:shadow-[0_8px_30px_rgba(37,99,235,0.18)]",
+                            },
+                            {
+                                button: "bg-purple-600 hover:bg-purple-700",
+                                border: "hover:border-purple-500/40",
+                                shadow: "hover:shadow-[0_8px_30px_rgba(147,51,234,0.18)]",
+                            },
+                            {
+                                button: "bg-emerald-600 hover:bg-emerald-700",
+                                border: "hover:border-emerald-500/40",
+                                shadow: "hover:shadow-[0_8px_30px_rgba(16,185,129,0.18)]",
+                            },
+                            {
+                                button: "bg-orange-600 hover:bg-orange-700",
+                                border: "hover:border-orange-500/40",
+                                shadow: "hover:shadow-[0_8px_30px_rgba(234,88,12,0.18)]",
+                            },
+                            {
+                                button: "bg-pink-600 hover:bg-pink-700",
+                                border: "hover:border-pink-500/40",
+                                shadow: "hover:shadow-[0_8px_30px_rgba(219,39,119,0.18)]",
+                            },
+                        ];
 
-    const color = colors[index % colors.length];
+                        const color = colors[index % colors.length];
 
                         const status = order.status;
 
@@ -156,21 +156,21 @@ const Order = () => {
                             status === "Delivered"
                                 ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                                 : status === "Cancelled"
-                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                                : status === "Shipped"
-                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                : status === "Processing"
-                                ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
-                                : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
+                                    ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                                    : status === "Shipped"
+                                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                        : status === "Processing"
+                                            ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
 
                         return (
-                            
+
                             <Card key={order._id}
-                                   className={` group overflow-hidden border-border/60  shadow-sm
+                                className={` group overflow-hidden border-border/60  shadow-sm
                                                 transition-all duration-300   hover:-translate-y-1
                                                         ${color.border}
                                                          ${color.shadow} `}>
-       
+
                                 {/* Card Header */}
                                 <CardHeader className="pb-4">
 
@@ -262,11 +262,10 @@ const Order = () => {
                                         </span>
 
                                         <span
-                                            className={`text-xs font-semibold ${
-                                                order.paymentStatus === "Paid"
+                                            className={`text-xs font-semibold ${order.paymentStatus === "Paid"
                                                     ? "text-green-600 dark:text-green-400"
                                                     : "text-yellow-600 dark:text-yellow-400"
-                                            }`}
+                                                }`}
                                         >
                                             {order.paymentStatus}
                                         </span>
@@ -274,13 +273,13 @@ const Order = () => {
                                     </div>
 
                                     {/* Button */}
-                                   
+
                                     <Button className={`mt-6 w-full text-white transition-all duration-300 hover:shadow-md
                                                       ${color.button}  `}
-                                            onClick={() => navigate(`/order/${order._id}`)}>          
-                                                 View Order Details
-                                         <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />  
-                                    </Button>           
+                                        onClick={() => navigate(`/order/${order._id}`)}>
+                                        View Order Details
+                                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </Button>
 
                                 </CardContent>
                             </Card>
