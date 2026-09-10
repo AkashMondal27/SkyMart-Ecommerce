@@ -45,17 +45,17 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-background">
 
-            {/* ================= MAIN WEBSITE NAVBAR ================= */}
-            {/* Your normal website navbar should be above this component */}
+            
 
             {/* ================= ADMIN HEADER ================= */}
-            <header className="sticky top-16 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-md dark:border-white/10 dark:bg-background/95">
+            <header className=" top-16 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-md dark:border-white/10 dark:bg-background/95">
 
                 <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
                     {/* LEFT - ADMIN DASHBOARD */}
                     <h1 className="text-lg font-bold text-gray-900 dark:text-white sm:text-xl">
-                        Admin Dashboard
+                       <span className=" text-green-500 text-3xl"> Admin </span> 
+                        <span className="text-blue-900 dark:text-blue-500">Dashboard</span>
                     </h1>
 
                     {/* ================= DESKTOP / TABLET ================= */}
@@ -208,7 +208,7 @@ const AdminDashboard = () => {
             </aside>
 
             {/* ================= PAGE CONTENT ================= */}
-            <main className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
+            <main className="mx-auto w-full max-w-7xl  px-4 pt-2 pb-4 sm:px-6 lg:px-8">
                 {renderPageContent()}
             </main>
 
