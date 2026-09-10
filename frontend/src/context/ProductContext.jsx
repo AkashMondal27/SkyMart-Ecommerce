@@ -126,6 +126,7 @@ export const ProductProvider = ({ children }) => {
                 setPage,
                 totalPages,
                 fetchProduct,
+                fetchProducts,
                 product,
                 relatedProducts,
             }}
