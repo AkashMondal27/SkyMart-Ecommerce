@@ -25,6 +25,6 @@ router.get("/:id", isAuth, getMyOder);
 
 router.get("/:id/status", isAuth, getOrderStatus);
 
-router.patch("/:id/status", isAuth, updateStatus);
+router.post("/:id/status", isAuth, updateStatus);
 
 export default router;
