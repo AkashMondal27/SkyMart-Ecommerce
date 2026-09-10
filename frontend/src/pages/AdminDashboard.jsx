@@ -6,6 +6,7 @@ import InfoAdmin from "@/components/admin/InfoAdmin";
 import OrdersAdmin from "@/components/admin/OrdersAdmin";
 
 import { Button } from "@/components/ui/button";
+import { UserData } from "@/context/UserContext";
 
 import {
     Home,
@@ -16,10 +17,17 @@ import {
 } from "lucide-react";
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
     const [selectedPage, setSelectedPage] = useState("home");
     const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    //Only admid can Acess / see this page 
+    const navigate=useNavigate();
+    const{user}=UserData()
+    if(user.role !=="admin")return navigate("/");
+
 
     const handlePageChange = (page) => {
         setSelectedPage(page);
@@ -219,58 +227,3 @@ const AdminDashboard = () => {
 export default AdminDashboard;
 
 
-
-
-
-
-
-// import HomeAdmin from '@/components/admin/HomeAdmin'
-// import InfoAdmin from '@/components/admin/InfoAdmin'
-// import OrdersAdmin from '@/components/admin/OrdersAdmin'
-// import { Button } from '@/components/ui/button'
-// import { Home } from 'lucide-react'
-// import React from 'react'
-
-
-
-// const AdminDashboard = () => {
-
-//     const [selecredPage, setSelecredPage] = useState("home")
-//     const [sidebarOpen, setSidebarOpen] = useState(false)
-
-
-//     const randerPageContent=()=>{
-//         switch(selecredPage){
-//             case"home" :return <HomeAdmin/>; 
-//             case"orders" :return<OrdersAdmin/>;
-//             case"info" :<InfoAdmin/>
-//             default: return<HomeAdmin/>                            
-//         }
-//     }
-
-
-//   return (
-//     <div className='flex min-h-screen'>
-//         {/* Sidebar */}
-//      <div className={`${sidebarOpen ? "translate-x-0":"-translate-x-full"}
-//                       fixed lg:relative lg:translate-x-0 h-full shadow-lg 
-//                       transition-transform duration-300 bg-background/50 border-b 
-//                       backfrop-blur z-50`}>
-
-//            <div className=' flex flex-col h-full p-4'>
-//                 <h1 className='text-lg font-bold mb-4'> Admin Panel</h1>
-//                 <div className='space-y-4'>
-//                     <Button variant='ghost' onClick={()=>setSelecredPage()} 
-//                             className={`w-ful flex items-center gap-2 ${selecredPage==="home" ? bg-gray-500:""}`} >
-//                         <Home className='w-5 h-5'/>
-//                         HOME
-//                     </Button>             
-//                 </div>
-//             </div>                
-
-//      </div>
-//     </div>
-//   )
-// }
-
-// export default AdminDashboard
