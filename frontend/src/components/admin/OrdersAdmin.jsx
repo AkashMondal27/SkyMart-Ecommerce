@@ -601,12 +601,14 @@ const OrdersAdmin = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  {/* <div className="flex items-center gap-2"> */}
+                  <div className="flex w-full items-center gap-2 sm:w-auto">
                     <Button
                       asChild
                       variant="outline"
                       size="sm"
-                      className="flex-1 sm:flex-none"
+                      className="h-9 flex-1 sm:w-[100px] sm:flex-none"
+                      // className="flex-1 sm:flex-none"
                     >
                       <Link to={`/order/${order._id}`}>
                         <Eye className="mr-2 h-4 w-4" />
@@ -614,7 +616,8 @@ const OrdersAdmin = () => {
                       </Link>
                     </Button>
 
-                    <div className="flex-1 sm:flex-none">
+                    {/* <div className="flex-1 sm:flex-none"> */}
+                    <div className="flex-1 sm:w-[130px] sm:flex-none">
                       <StatusSelect order={order} />
                     </div>
                   </div>
