@@ -274,7 +274,7 @@ if (!address) {
               </span>
 
               <span className="font-medium">
-                ₹{subTotal}
+                ₹{subTotal.toLocaleString("en-IN")}
               </span>
             </div>
           </div>

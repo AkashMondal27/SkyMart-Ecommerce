@@ -168,7 +168,7 @@ const Cart = () => {
                                 </span>
 
                                 <span className="font-medium text-foreground">
-                                    ₹{subTotal}
+                                    ₹{subTotal.toLocaleString("en-IN")}
                                 </span>
                             </div>
 
@@ -181,7 +181,7 @@ const Cart = () => {
                                 </span>
 
                                 <span className="text-xl font-bold tracking-tight">
-                                    ₹{subTotal}
+                                    ₹{subTotal.toLocaleString("en-IN")}
                                 </span>
                             </div>
 

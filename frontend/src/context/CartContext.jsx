@@ -51,7 +51,7 @@ export const CartProvider = ({ children }) => {
 
             setCart(cartData?.cart || []);
             setTotalItem(cartData?.sumOfQuantities || 0);
-            setSubTotal(cartData?.subTotal || 0);
+            setSubTotal(cartData?.subTotal.toLocaleString("en-IN") || 0);
 
         } catch (error) {
             console.error(
