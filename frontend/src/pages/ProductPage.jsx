@@ -1,5 +1,6 @@
 import Loading from "@/components/Loading";
-
+import Cookies from "js-cookie";
+import { server } from "@/main";
 
 import {
     Carousel,
@@ -24,11 +25,12 @@ import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/ProductCard";
 import { CartData } from "@/context/CartContext";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 
 const ProductPage = () => {
     const { id } = useParams();
-    const { isAuth } = UserData();
+    const { isAuth, user } = UserData();
     const { cart, addToCart } = CartData();
 
     const {
@@ -38,22 +40,34 @@ const ProductPage = () => {
         fetchProduct,
     } = ProductData();
 
+
+    // Up Arrow setup on related product 
+    const [showAllRelated, setShowAllRelated] = useState(false);
+
+    // Admin edit states
+    const [show, setShow] = useState(false);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [category, setCategory] = useState("");
+    const [stock, setStock] = useState("");
+    const [btnLoading, setBtnLoading] = useState(false);
+
+
     useEffect(() => {
         if (id) {
             fetchProduct(id);
         }
     }, [id]);
 
-    // Up Arrow setup on related product 
-    const [showAllRelated, setShowAllRelated] = useState(false);
 
-    // Loading
+    // ================= NOW CONDITIONAL RETURNS =================
+
     if (loading) {
         return <Loading />;
     }
 
 
-    // Product not found
     if (!product) {
         return (
             <div className="container flex min-h-[50vh] items-center justify-center px-4">
@@ -74,6 +88,7 @@ const ProductPage = () => {
         );
     }
 
+
     // Find this product in the current user's cart
     const cartItem = cart?.find(
         (item) => item.product?._id === product._id
@@ -92,11 +107,140 @@ const ProductPage = () => {
     const addToCartHandler = () => {
         if (remainingStock <= 0) {
             toast.error("You have reached the available quantity");
-                return;
+            return;
         }
 
         addToCart(id);
     };
+
+    // // Make logic so admin can edit the product
+    // const [show, setShow] = useState(false);
+    // const [title, setTitle] = useState("")
+    // const [description, setDescription] = useState("")
+    // const [price, setPrice] = useState("")
+    // const [category, setCategory] = useState("")
+    // const [stock, setStock] = useState("")
+
+    // const [btnLoading, setBtnLoading] = useState(false)
+
+
+    // const updateHandlaer=()=>{
+    //     setShow(!show)
+    //     setCategory(product.category)
+    //     setTitle(product.title)
+    //     setDescription(product.description)
+    //     setStock(product.stock)
+    //     setPrice(product.price)
+    // }
+
+
+    // const submitHandler=async(e)=>{
+    //     e.preventDefault();
+    //     setBtnLoading(true)
+
+    //     try {
+    //         const{data}=await axios.put(`${server}/api/v1/products/${id}` ,{
+    //             title,description,price,stock, category
+    //         },{
+    //             headers:{
+    //                 token:Cookies.get("token")
+    //             }
+    //         })
+
+    //         toast.success(data.message),
+    //         fetchProduct(id)
+    //         setShow(false)
+
+    //     } catch (error) {
+    //         console.log(error)
+    //         toast.error(error.response.data.message)
+    //     }finally{
+    //         setBtnLoading(false)
+    //     }
+    // }
+
+
+
+
+
+
+    // Open edit form and load current product data
+    const updateHandler = () => {
+        setTitle(product.title || "");
+        setDescription(product.description || "");
+        setPrice(product.price ?? "");
+        setCategory(product.category || "");
+        setStock(product.stock ?? "");
+
+        setShow((prev) => !prev);
+    };
+
+    // Submit updated product
+    const submitHandler = async (e) => {
+        e.preventDefault();
+
+        if (!title.trim()) {
+            toast.error("Product title is required");
+            return;
+        }
+
+        if (!description.trim()) {
+            toast.error("Product description is required");
+            return;
+        }
+
+        if (!category.trim()) {
+            toast.error("Product category is required");
+            return;
+        }
+
+        if (price === "" || Number(price) < 0) {
+            toast.error("Enter a valid price");
+            return;
+        }
+
+        if (stock === "" || Number(stock) < 0) {
+            toast.error("Enter a valid stock quantity");
+            return;
+        }
+
+        setBtnLoading(true);
+
+        try {
+            const { data } = await axios.put(
+                `${server}/api/v1/products/${id}`,
+                {
+                    title: title.trim(),
+                    description: description.trim(),
+                    price: Number(price),
+                    stock: Number(stock),
+                    category: category.trim(),
+                },
+                {
+                    headers: {
+                        token: Cookies.get("token"),
+                    },
+                }
+            );
+
+            toast.success(data.message || "Product updated successfully");
+
+            await fetchProduct(id);
+
+            setShow(false);
+        } catch (error) {
+            console.error("Update product error:", error);
+
+            toast.error(
+                error?.response?.data?.message ||
+                "Failed to update product"
+            );
+        } finally {
+            setBtnLoading(false);
+        }
+    };
+
+
 
 
     return (
@@ -114,7 +258,7 @@ const ProductPage = () => {
 
                 {/* Product */}
                 {/* <div className="grid grid-cols-1 gap-7 md:grid-cols-[360px_1fr] md:gap-10"> */}
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-[420px_1fr] md:gap-16 lg:grid-cols-[460px_1fr] lg:gap-20">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-[420px_1fr] md:gap-16 lg:grid-cols-[460px_1fr] lg:gap-20">
 
 
                     {/* ================= IMAGE ================= */}
@@ -216,11 +360,100 @@ const ProductPage = () => {
                                 </p>
                             )}
                         </div>
+                        {/* Admin Edit Button */}
+                        {isAuth && user?.role === "admin" && (
+                            <Button
+                                type="button"
+                                onClick={updateHandler}
+                                className="mt-4 w-fit"
+                            >
+                                {show ? "Cancel Edit" : "Edit Product"}
+                            </Button>
+                        )}
                     </div>
                 </div>
 
 
+                {/* -------------------------------------------------------------
+                    Admin Edit Form 
+                ----------------------------------------------------------------- */}
+                {isAuth && user?.role === "admin" && show && (
+                    <div className="mt-8 rounded-xl border bg-card p-6 shadow-sm">
+                        <h2 className="mb-5 text-xl font-bold">
+                            Edit Product
+                        </h2>
 
+                        <form onSubmit={submitHandler} className="space-y-5">
+
+                            <input
+                                type="text"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Product title"
+                                className="w-full rounded-lg border bg-background px-4 py-3"
+                            />
+
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Product description"
+                                rows={4}
+                                className="w-full rounded-lg border bg-background px-4 py-3"
+                            />
+
+                            <input
+                                type="text"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                placeholder="Category"
+                                className="w-full rounded-lg border bg-background px-4 py-3"
+                            />
+
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    placeholder="Price"
+                                    className="w-full rounded-lg border bg-background px-4 py-3"
+                                />
+
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={stock}
+                                    onChange={(e) => setStock(e.target.value)}
+                                    placeholder="Stock"
+                                    className="w-full rounded-lg border bg-background px-4 py-3"
+                                />
+
+                            </div>
+
+                            <div className="flex gap-3">
+
+                                <Button
+                                    type="submit"
+                                    disabled={btnLoading}
+                                >
+                                    {btnLoading ? "Updating..." : "Update Product"}
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setShow(false)}
+                                    disabled={btnLoading}
+                                >
+                                    Cancel
+                                </Button>
+
+                            </div>
+
+                        </form>
+                    </div>
+                )}
 
 
                 {/* ================= RELATED PRODUCTS ================= */}
