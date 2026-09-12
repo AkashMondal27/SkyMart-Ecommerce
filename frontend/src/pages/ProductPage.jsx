@@ -166,7 +166,7 @@ const ProductPage = () => {
         setBtnLoading(true);
 
         try {
-             // 1. Update product details
+            // 1. Update product details
             const { data } = await axios.put(
                 `${server}/api/v1/products/${id}`,
                 {
@@ -183,24 +183,20 @@ const ProductPage = () => {
                 },
             );
 
-             // 2. Update images only when new images are selected
-        if (updatedImage.length > 0) {
-            const formData = new FormData();
+            // 2. Update images only when new images are selected
+            if (updatedImage.length > 0) {
+                const formData = new FormData();
 
-            updatedImage.forEach((image) => {
-                formData.append("files", image);
-            });
+                updatedImage.forEach((image) => {
+                    formData.append("files", image);
+                });
 
-            await axios.post(
-                `${server}/api/v1/products/${id}`,
-                formData,
-                {
+                await axios.post(`${server}/api/v1/products/${id}`, formData, {
                     headers: {
                         token: Cookies.get("token"),
                     },
-                }
-            );
-        }
+                });
+            }
 
             toast.success(data.message || "Product updated successfully");
 
@@ -230,8 +226,6 @@ const ProductPage = () => {
     const removeImage = (index) => {
         setUpdatedImage((prev) => prev.filter((_, i) => i !== index));
     };
-
-   
 
     return (
         <main className="w-full px-4 py-6 sm:px-6 md:py-8 lg:px-8">
@@ -365,40 +359,18 @@ const ProductPage = () => {
                 {isAuth && user?.role === "admin" && (
                     <Dialog open={open} onOpenChange={handleDialogChange}>
                         <DialogContent
-                            className="
-              w-[calc(100%-1.5rem)]
-              max-w-2xl
-              max-h-[90vh]
-              overflow-y-auto
-              rounded-2xl
-              border border-slate-200
-              bg-white
-              p-0
-              shadow-2xl
-
-              dark:border-slate-800
-              dark:bg-slate-950
-
-              sm:w-full
-            "
+                            className="w-[calc(100%-1.5rem)] max-w-2xl max-h-[90vh]
+                                      overflow-y-auto  rounded-2xl border border-slate-200
+                                      bg-white p-0 shadow-2xl dark:border-slate-800
+                                      dark:bg-slate-950 sm:w-full"
                         >
                             {/* DIALOG HEADER */}
 
                             <DialogHeader
-                                className="
-                border-b border-slate-200
-                px-5 py-4
-                dark:border-slate-800
-                sm:px-6
-              "
+                                className=" border-b border-slate-200 px-5 py-4
+                                           dark:border-slate-800 sm:px-6 "
                             >
-                                <DialogTitle
-                                    className="
-                  text-xl font-bold
-                  text-slate-900
-                  dark:text-white
-                "
-                                >
+                                <DialogTitle className=" text-xl font-bold text-slate-900 dark:text-white ">
                                     Update Existing Product
                                 </DialogTitle>
 
@@ -418,11 +390,7 @@ const ProductPage = () => {
                                 <div className="space-y-2">
                                     <label
                                         htmlFor="title"
-                                        className="
-                    text-sm font-medium
-                    text-slate-700
-                    dark:text-slate-200
-                  "
+                                        className=" text-sm font-medium text-slate-700 dark:text-slate-200"
                                     >
                                         Product Title
                                     </label>
@@ -435,23 +403,12 @@ const ProductPage = () => {
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
                                         required
-                                        className="
-                    w-full rounded-xl
-                    border border-slate-300
-                    bg-white px-4 py-3
-                    text-sm text-slate-900
-                    outline-none
-                    transition
-                    placeholder:text-slate-400
-                    focus:border-blue-500
-                    focus:ring-2 focus:ring-blue-500/20
-
-                    dark:border-slate-700
-                    dark:bg-slate-900
-                    dark:text-white
-                    dark:placeholder:text-slate-500
-                    dark:focus:border-blue-500
-                  "
+                                        className=" w-full rounded-xl border border-slate-300 bg-white px-4 py-3
+                                                   text-sm text-slate-900 outline-none transition
+                                                   placeholder:text-slate-400 focus:border-blue-500
+                                                   focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700
+                                                 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500
+                                                   dark:focus:border-blue-500 "
                                     />
                                 </div>
 
@@ -460,11 +417,7 @@ const ProductPage = () => {
                                 <div className="space-y-2">
                                     <label
                                         htmlFor="description"
-                                        className="
-                    text-sm font-medium
-                    text-slate-700
-                    dark:text-slate-200
-                  "
+                                        className="text-sm font-medium text-slate-700 dark:text-slate-200"
                                     >
                                         Description
                                     </label>
@@ -476,23 +429,13 @@ const ProductPage = () => {
                                         placeholder="Enter product description"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        className="
-                    w-full resize-none rounded-xl
-                    border border-slate-300
-                    bg-white px-4 py-3
-                    text-sm text-slate-900
-                    outline-none
-                    transition
-                    placeholder:text-slate-400
-                    focus:border-blue-500
-                    focus:ring-2 focus:ring-blue-500/20
-
-                    dark:border-slate-700
-                    dark:bg-slate-900
-                    dark:text-white
-                    dark:placeholder:text-slate-500
-                    dark:focus:border-blue-500
-                  "
+                                        className="w-full resize-none rounded-xl border border-slate-300
+                                                   bg-white px-4 py-3 text-sm text-slate-900 outline-none
+                                                   transition placeholder:text-slate-400 focus:border-blue-500
+                                                   focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700
+                                                   dark:bg-slate-900 dark:text-white
+                                                  dark:placeholder:text-slate-500
+                                                  dark:focus:border-blue-500 "
                                     />
                                 </div>
 
@@ -501,11 +444,7 @@ const ProductPage = () => {
                                 <div className="space-y-2">
                                     <label
                                         htmlFor="category"
-                                        className="
-                    text-sm font-medium
-                    text-slate-700
-                    dark:text-slate-200
-                  "
+                                        className="text-sm font-medium text-slate-700 dark:text-slate-200 "
                                     >
                                         Category
                                     </label>
@@ -516,21 +455,12 @@ const ProductPage = () => {
                                         value={category}
                                         onChange={(e) => setCategory(e.target.value)}
                                         required
-                                        className="
-                    w-full rounded-xl
-                    border border-slate-300
-                    bg-white px-4 py-3
-                    text-sm text-slate-900
-                    outline-none
-                    transition
-                    focus:border-blue-500
-                    focus:ring-2 focus:ring-blue-500/20
-
-                    dark:border-slate-700
-                    dark:bg-slate-900
-                    dark:text-white
-                    dark:focus:border-blue-500
-                  "
+                                        className=" w-full rounded-xl border border-slate-300
+                                                 bg-white px-4 py-3 text-sm text-slate-900
+                                                  outline-none transition focus:border-blue-500
+                                                  focus:ring-2 focus:ring-blue-500/20 
+                                                  dark:border-slate-700 dark:bg-slate-900
+                                                  dark:text-white dark:focus:border-blue-500 "
                                     >
                                         <option value="">Select Category</option>
 
@@ -550,24 +480,16 @@ const ProductPage = () => {
                                     <div className="space-y-2">
                                         <label
                                             htmlFor="price"
-                                            className="
-                      text-sm font-medium
-                      text-slate-700
-                      dark:text-slate-200
-                    "
+                                            className="text-sm font-medium  text-slate-700 dark:text-slate-200"
                                         >
                                             Price
                                         </label>
 
                                         <div className="relative">
                                             <span
-                                                className="
-                        absolute left-4 top-1/2
-                        -translate-y-1/2
-                        text-sm font-medium
-                        text-slate-500
-                        dark:text-slate-400
-                      "
+                                                className=" absolute left-4 top-1/2  -translate-y-1/2
+                                                           text-sm font-medium text-slate-500
+                                                           dark:text-slate-400"
                                             >
                                                 ₹
                                             </span>
@@ -581,23 +503,12 @@ const ProductPage = () => {
                                                 placeholder="0.00"
                                                 value={price}
                                                 onChange={(e) => setPrice(e.target.value)}
-                                                className="
-                        w-full rounded-xl
-                        border border-slate-300
-                        bg-white
-                        py-3 pl-9 pr-4
-                        text-sm text-slate-900
-                        outline-none
-                        transition
-                        placeholder:text-slate-400
-                        focus:border-blue-500
-                        focus:ring-2 focus:ring-blue-500/20
-
-                        dark:border-slate-700
-                        dark:bg-slate-900
-                        dark:text-white
-                        dark:placeholder:text-slate-500
-                      "
+                                                className="w-full rounded-xl border border-slate-300 bg-white
+                                                          py-3 pl-9 pr-4 text-sm text-slate-900 outline-none
+                                                          transition placeholder:text-slate-400
+                                                          focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
+                                                          dark:border-slate-700 dark:bg-slate-900  dark:text-white
+                                                          dark:placeholder:text-slate-500 "
                                             />
                                         </div>
                                     </div>
@@ -607,11 +518,7 @@ const ProductPage = () => {
                                     <div className="space-y-2">
                                         <label
                                             htmlFor="stock"
-                                            className="
-                      text-sm font-medium
-                      text-slate-700
-                      dark:text-slate-200
-                    "
+                                            className="text-sm font-medium text-slate-700 dark:text-slate-200"
                                         >
                                             Stock
                                         </label>
@@ -626,22 +533,11 @@ const ProductPage = () => {
                                             value={stock}
                                             onChange={(e) => setStock(e.target.value)}
                                             required
-                                            className="
-                      w-full rounded-xl
-                      border border-slate-300
-                      bg-white px-4 py-3
-                      text-sm text-slate-900
-                      outline-none
-                      transition
-                      placeholder:text-slate-400
-                      focus:border-blue-500
-                      focus:ring-2 focus:ring-blue-500/20
-
-                      dark:border-slate-700
-                      dark:bg-slate-900
-                      dark:text-white
-                      dark:placeholder:text-slate-500
-                    "
+                                            className=" w-full rounded-xl border border-slate-300 bg-white px-4 py-3
+                                                        text-sm text-slate-900  outline-none  transition
+                                                        placeholder:text-slate-400 focus:border-blue-500
+                                                        focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700
+                                                      dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500"
                                         />
                                     </div>
                                 </div>
@@ -666,37 +562,16 @@ const ProductPage = () => {
 
                                     <label
                                         htmlFor="images"
-                                        className="
-                    flex cursor-pointer
-                    flex-col items-center justify-center
-                    rounded-xl
-                    border-2 border-dashed
-                    border-slate-300
-                    bg-slate-50
-                    px-4 py-7
-                    text-center
-                    transition
-                    hover:border-blue-400
-                    hover:bg-blue-50/50
-
-                    dark:border-slate-700
-                    dark:bg-slate-900/60
-                    dark:hover:border-blue-500
-                    dark:hover:bg-blue-950/20
-                  "
+                                        className="flex cursor-pointer  flex-col items-center justify-center rounded-xl
+                                                   border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-7
+                                                   text-center  transition hover:border-blue-400 hover:bg-blue-50/50
+                                                   dark:border-slate-700 dark:bg-slate-900/60 dark:hover:border-blue-500
+                                                   dark:hover:bg-blue-950/20"
                                     >
                                         <div
-                                            className="
-                      mb-2 flex h-11 w-11
-                      items-center justify-center
-                      rounded-full
-                      bg-blue-100
-                      text-xl
-                      text-blue-600
-
-                      dark:bg-blue-500/10
-                      dark:text-blue-400
-                    "
+                                            className=" mb-2 flex h-11 w-11 items-center justify-center
+                                                        rounded-full bg-blue-100 text-xl text-blue-600
+                                                        dark:bg-blue-500/10 dark:text-blue-400 "
                                         >
                                             ↑
                                         </div>
@@ -727,7 +602,9 @@ const ProductPage = () => {
                                             {updatedImage.map((image, index) => (
                                                 <div
                                                     key={`${image.name}-${index}`}
-                                                    className="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-900"
+                                                    className="group relative aspect-square overflow-hidden rounded-xl border
+                                                             border-slate-200 bg-slate-100 dark:border-slate-700
+                                                              dark:bg-slate-900"
                                                 >
                                                     <img
                                                         src={URL.createObjectURL(image)}
@@ -738,13 +615,19 @@ const ProductPage = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => removeImage(index)}
-                                                        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white transition hover:bg-red-600"
+                                                        className="absolute right-2 top-2 flex h-7 w-7 items-center 
+                                                                   justify-center rounded-full bg-black/70 
+                                                                   text-sm font-bold text-white transition 
+                                                                   hover:bg-red-600"
                                                         aria-label={`Remove image ${index + 1}`}
                                                     >
                                                         ×
                                                     </button>
 
-                                                    <div className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 text-[10px] font-medium text-white">
+                                                    <div
+                                                        className="absolute bottom-2 left-2 rounded-md bg-black/60 
+                                                                    px-2 py-1 text-[10px] font-medium text-white"
+                                                    >
                                                         Image {index + 1}
                                                     </div>
                                                 </div>
@@ -756,15 +639,8 @@ const ProductPage = () => {
                                 {/* ================= ACTIONS ================= */}
 
                                 <div
-                                    className="
-                  flex flex-col-reverse gap-3
-                  border-t border-slate-200
-                  pt-5
-
-                  dark:border-slate-800
-
-                  sm:flex-row sm:justify-end
-                "
+                                    className="flex flex-col-reverse gap-3 border-t border-slate-200
+                                              pt-5 dark:border-slate-800 sm:flex-row sm:justify-end"
                                 >
                                     {/* CANCEL */}
 
@@ -772,24 +648,12 @@ const ProductPage = () => {
                                         type="button"
                                         disabled={btnLoading}
                                         onClick={() => handleDialogChange(false)}
-                                        className="
-                    w-full rounded-xl
-                    border border-slate-300
-                    bg-white px-5 py-2.5
-                    text-sm font-semibold
-                    text-slate-700
-                    transition
-                    hover:bg-slate-50
-                    disabled:cursor-not-allowed
-                    disabled:opacity-50
-
-                    dark:border-slate-700
-                    dark:bg-slate-900
-                    dark:text-slate-200
-                    dark:hover:bg-slate-800
-
-                    sm:w-auto
-                  "
+                                        className="w-full rounded-xl border border-slate-300 bg-white px-5 py-2.5
+                                                   text-sm font-semibold text-slate-700  transition
+                                                   hover:bg-slate-50 disabled:cursor-not-allowed
+                                                    disabled:opacity-50 dark:border-slate-700
+                                                    dark:bg-slate-900 dark:text-slate-200
+                                                    dark:hover:bg-slate-800 sm:w-auto"
                                     >
                                         Cancel
                                     </button>
@@ -799,37 +663,17 @@ const ProductPage = () => {
                                     <button
                                         type="submit"
                                         disabled={btnLoading}
-                                        className="
-                    flex w-full
-                    items-center justify-center gap-2
-                    rounded-xl
-                    bg-blue-600
-                    px-6 py-2.5
-                    text-sm font-semibold
-                    text-white
-                    shadow-sm
-                    transition
-                    hover:bg-blue-700
-                    disabled:cursor-not-allowed
-                    disabled:opacity-60
-
-                    dark:bg-blue-500
-                    dark:hover:bg-blue-600
-
-                    sm:w-auto
-                  "
+                                        className=" flex w-full items-center justify-center gap-2 rounded-xl
+                                                   bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white
+                                                    shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed
+                                                    disabled:opacity-60 dark:bg-blue-500 dark:hover:bg-blue-600
+                                                    sm:w-auto "
                                     >
                                         {btnLoading ? (
                                             <>
                                                 <span
-                                                    className="
-                          h-4 w-4
-                          animate-spin
-                          rounded-full
-                          border-2
-                          border-white/30
-                          border-t-white
-                        "
+                                                    className="h-4 w-4 animate-spin  rounded-full  border-2
+                                                               border-white/30 border-t-white "
                                                 />
                                                 Update Product
                                             </>
